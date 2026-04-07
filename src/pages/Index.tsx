@@ -1,11 +1,24 @@
 import { useState } from "react";
-import { Calendar, Users, MapPin, Clock, ChevronDown, User } from "lucide-react";
+import { Calendar, Users, MapPin, Clock, ChevronDown, User, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 type Tab = "tonight" | "plans" | "places";
 type PlaceFilter = "All" | "Bars" | "Food" | "Hostels";
+
+interface Plan {
+  id: string;
+  organizer: string;
+  title: string;
+  description: string;
+  time: string;
+  joined: number;
+  avatar: string;
+}
 
 const events = [
   { name: "Pub Crawl Poblado", time: "8:00 PM", venue: "Meeting at Parque Lleras", tag: "Pub Crawl", emoji: "🍻" },
@@ -15,11 +28,11 @@ const events = [
   { name: "Latin Dance Party", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃" },
 ];
 
-const plans = [
-  { organizer: "Alex", title: "Rooftop drinks in Poblado", time: "Tonight, 7 PM", joined: 4, avatar: "A" },
-  { organizer: "Mia", title: "Salsa night crew", time: "Tonight, 9 PM", joined: 7, avatar: "M" },
-  { organizer: "João", title: "Street food tour Laureles", time: "Tomorrow, 6 PM", joined: 3, avatar: "J" },
-  { organizer: "Sophie", title: "Sunrise hike to Piedra del Peñol", time: "Saturday, 5 AM", joined: 5, avatar: "S" },
+const initialPlans: Plan[] = [
+  { id: "1", organizer: "Alex", title: "Rooftop drinks in Poblado", description: "Chill vibes at Envy Rooftop, first round on me!", time: "Tonight, 7 PM", joined: 4, avatar: "A" },
+  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", joined: 7, avatar: "M" },
+  { id: "3", organizer: "João", title: "Street food tour Laureles", description: "Exploring the best local eats in the neighborhood.", time: "Tomorrow, 6 PM", joined: 3, avatar: "J" },
+  { id: "4", organizer: "Sophie", title: "Sunrise hike to Piedra del Peñol", description: "Early start but worth it! Transport included.", time: "Saturday, 5 AM", joined: 5, avatar: "S" },
 ];
 
 const places = [
@@ -35,12 +48,31 @@ const datePills = ["Today", "Fri", "Sat", "Sun", "Mon"];
 export default function Index() {
   const [tab, setTab] = useState<Tab>("tonight");
   const [placeFilter, setPlaceFilter] = useState<PlaceFilter>("All");
+  const [plans, setPlans] = useState<Plan[]>(initialPlans);
+  const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
 
   const filteredPlaces = placeFilter === "All" ? places : places.filter(p => p.category === placeFilter);
 
+  const handleJoin = (id: string) => {
+    if (joinedPlans.has(id)) return;
+    setJoinedPlans(prev => new Set(prev).add(id));
+    setPlans(prev => prev.map(p => p.id === id ? { ...p, joined: p.joined + 1 } : p));
+  };
+
+  const handleCreatePlan = (plan: Omit<Plan, "id" | "joined" | "organizer" | "avatar">) => {
+    const newPlan: Plan = {
+      ...plan,
+      id: Date.now().toString(),
+      organizer: "You",
+      avatar: "Y",
+      joined: 1,
+    };
+    setPlans(prev => [newPlan, ...prev]);
+    setJoinedPlans(prev => new Set(prev).add(newPlan.id));
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
-      {/* Header */}
       <header className="flex items-center justify-between px-5 pt-5 pb-3">
         <div>
           <h1 className="text-2xl font-bold text-primary tracking-tight">Roamora</h1>
@@ -53,14 +85,19 @@ export default function Index() {
         </Avatar>
       </header>
 
-      {/* Content */}
       <main className="flex-1 overflow-y-auto px-5 pb-24">
         {tab === "tonight" && <TonightTab />}
-        {tab === "plans" && <PlansTab />}
+        {tab === "plans" && (
+          <PlansTab
+            plans={plans}
+            joinedPlans={joinedPlans}
+            onJoin={handleJoin}
+            onCreate={handleCreatePlan}
+          />
+        )}
         {tab === "places" && <PlacesTab filter={placeFilter} setFilter={setPlaceFilter} places={filteredPlaces} />}
       </main>
 
-      {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card/95 backdrop-blur border-t border-border">
         <div className="flex justify-around py-2">
           {([
@@ -115,27 +152,87 @@ function TonightTab() {
   );
 }
 
-function PlansTab() {
+function PlansTab({
+  plans,
+  joinedPlans,
+  onJoin,
+  onCreate,
+}: {
+  plans: Plan[];
+  joinedPlans: Set<string>;
+  onJoin: (id: string) => void;
+  onCreate: (plan: Omit<Plan, "id" | "joined" | "organizer" | "avatar">) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [time, setTime] = useState("");
+
+  const handleSubmit = () => {
+    if (!title.trim() || !time.trim()) return;
+    onCreate({ title: title.trim(), description: description.trim(), time: time.trim() });
+    setTitle("");
+    setDescription("");
+    setTime("");
+    setOpen(false);
+  };
+
   return (
     <div className="space-y-3">
-      <p className="text-muted-foreground text-sm">Join other travelers or start your own plan ✌️</p>
-      {plans.map(p => (
-        <div key={p.title} className="bg-card rounded-xl p-4 space-y-3">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-primary/20 text-primary text-sm font-semibold">{p.avatar}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{p.title}</h3>
-              <p className="text-xs text-muted-foreground">{p.organizer} · {p.time}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-muted-foreground text-sm">Join other travelers or start your own plan ✌️</p>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm" className="rounded-full h-8 px-3 text-xs font-semibold gap-1">
+              <Plus className="w-3.5 h-3.5" /> Create
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-sm mx-auto">
+            <DialogHeader>
+              <DialogTitle>Create a Plan</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-2">
+              <Input placeholder="Title (e.g. Going out tonight)" value={title} onChange={e => setTitle(e.target.value)} />
+              <Textarea placeholder="Description (optional)" value={description} onChange={e => setDescription(e.target.value)} className="min-h-[60px]" />
+              <Input placeholder="Time (e.g. Tonight, 9 PM)" value={time} onChange={e => setTime(e.target.value)} />
+              <Button onClick={handleSubmit} className="w-full" disabled={!title.trim() || !time.trim()}>
+                Create Plan
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      {plans.map(p => {
+        const hasJoined = joinedPlans.has(p.id);
+        return (
+          <div key={p.id} className="bg-card rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary/20 text-primary text-sm font-semibold">{p.avatar}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-foreground truncate">{p.title}</h3>
+                <p className="text-xs text-muted-foreground">{p.organizer} · {p.time}</p>
+              </div>
+            </div>
+            {p.description && (
+              <p className="text-sm text-muted-foreground">{p.description}</p>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">{p.joined} joined</span>
+              <Button
+                size="sm"
+                variant={hasJoined ? "secondary" : "default"}
+                className="rounded-full px-5 h-8 text-xs font-semibold"
+                onClick={() => onJoin(p.id)}
+                disabled={hasJoined}
+              >
+                {hasJoined ? "Joined ✓" : "Join"}
+              </Button>
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">{p.joined} joined</span>
-            <Button size="sm" className="rounded-full px-5 h-8 text-xs font-semibold">Join</Button>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
