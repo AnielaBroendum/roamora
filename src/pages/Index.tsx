@@ -93,16 +93,19 @@ export default function Index() {
   const handleJoin = (id: string) => {
     if (joinedPlans.has(id)) return;
     setJoinedPlans(prev => new Set(prev).add(id));
-    setPlans(prev => prev.map(p => p.id === id ? { ...p, joined: p.joined + 1 } : p));
+    setPlans(prev => prev.map(p => p.id === id ? {
+      ...p,
+      members: [...p.members, { name: "You", avatar: "Y", color: memberColors[p.members.length % memberColors.length] }],
+    } : p));
   };
 
-  const handleCreatePlan = (plan: Omit<Plan, "id" | "joined" | "organizer" | "avatar">) => {
+  const handleCreatePlan = (plan: Omit<Plan, "id" | "organizer" | "avatar" | "members">) => {
     const newPlan: Plan = {
       ...plan,
       id: Date.now().toString(),
       organizer: "You",
       avatar: "Y",
-      joined: 1,
+      members: [{ name: "You", avatar: "Y", color: memberColors[0] }],
     };
     setPlans(prev => [newPlan, ...prev]);
     setJoinedPlans(prev => new Set(prev).add(newPlan.id));
@@ -198,7 +201,7 @@ function PlansTab({
   plans: Plan[];
   joinedPlans: Set<string>;
   onJoin: (id: string) => void;
-  onCreate: (plan: Omit<Plan, "id" | "joined" | "organizer" | "avatar">) => void;
+  onCreate: (plan: Omit<Plan, "id" | "organizer" | "avatar" | "members">) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -256,7 +259,21 @@ function PlansTab({
               <p className="text-sm text-muted-foreground">{p.description}</p>
             )}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{p.joined} joined</span>
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {p.members.slice(0, 5).map((m, i) => (
+                    <Avatar key={i} className="h-7 w-7 border-2 border-card">
+                      <AvatarFallback className={`${m.color} text-[10px] font-semibold`}>{m.avatar}</AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {p.members.length > 5 && (
+                    <Avatar className="h-7 w-7 border-2 border-card">
+                      <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-semibold">+{p.members.length - 5}</AvatarFallback>
+                    </Avatar>
+                  )}
+                </div>
+                <span className="text-xs text-muted-foreground">{p.members.length} joined</span>
+              </div>
               <Button
                 size="sm"
                 variant={hasJoined ? "secondary" : "default"}
