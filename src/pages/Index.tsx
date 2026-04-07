@@ -10,15 +10,29 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 type Tab = "tonight" | "plans" | "places";
 type PlaceFilter = "All" | "Bars" | "Food" | "Hostels";
 
+interface PlanMember {
+  name: string;
+  avatar: string;
+  color: string;
+}
+
 interface Plan {
   id: string;
   organizer: string;
   title: string;
   description: string;
   time: string;
-  joined: number;
+  members: PlanMember[];
   avatar: string;
 }
+
+const memberColors = [
+  "bg-primary/20 text-primary",
+  "bg-destructive/20 text-destructive",
+  "bg-accent text-accent-foreground",
+  "bg-secondary text-secondary-foreground",
+  "bg-primary/30 text-primary",
+];
 
 const events = [
   { name: "Pub Crawl Poblado", time: "8:00 PM", venue: "Meeting at Parque Lleras", tag: "Pub Crawl", emoji: "🍻" },
@@ -29,10 +43,33 @@ const events = [
 ];
 
 const initialPlans: Plan[] = [
-  { id: "1", organizer: "Alex", title: "Rooftop drinks in Poblado", description: "Chill vibes at Envy Rooftop, first round on me!", time: "Tonight, 7 PM", joined: 4, avatar: "A" },
-  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", joined: 7, avatar: "M" },
-  { id: "3", organizer: "João", title: "Street food tour Laureles", description: "Exploring the best local eats in the neighborhood.", time: "Tomorrow, 6 PM", joined: 3, avatar: "J" },
-  { id: "4", organizer: "Sophie", title: "Sunrise hike to Piedra del Peñol", description: "Early start but worth it! Transport included.", time: "Saturday, 5 AM", joined: 5, avatar: "S" },
+  { id: "1", organizer: "Alex", title: "Rooftop drinks in Poblado", description: "Chill vibes at Envy Rooftop, first round on me!", time: "Tonight, 7 PM", avatar: "A", members: [
+    { name: "Alex", avatar: "A", color: memberColors[0] },
+    { name: "Lena", avatar: "L", color: memberColors[1] },
+    { name: "Carlos", avatar: "C", color: memberColors[2] },
+    { name: "Yuki", avatar: "Y", color: memberColors[3] },
+  ]},
+  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", avatar: "M", members: [
+    { name: "Mia", avatar: "M", color: memberColors[1] },
+    { name: "Tom", avatar: "T", color: memberColors[0] },
+    { name: "Nina", avatar: "N", color: memberColors[4] },
+    { name: "Raj", avatar: "R", color: memberColors[2] },
+    { name: "Ava", avatar: "A", color: memberColors[3] },
+    { name: "Leo", avatar: "L", color: memberColors[0] },
+    { name: "Zoe", avatar: "Z", color: memberColors[1] },
+  ]},
+  { id: "3", organizer: "João", title: "Street food tour Laureles", description: "Exploring the best local eats in the neighborhood.", time: "Tomorrow, 6 PM", avatar: "J", members: [
+    { name: "João", avatar: "J", color: memberColors[2] },
+    { name: "Emma", avatar: "E", color: memberColors[0] },
+    { name: "Dan", avatar: "D", color: memberColors[4] },
+  ]},
+  { id: "4", organizer: "Sophie", title: "Sunrise hike to Piedra del Peñol", description: "Early start but worth it! Transport included.", time: "Saturday, 5 AM", avatar: "S", members: [
+    { name: "Sophie", avatar: "S", color: memberColors[3] },
+    { name: "Max", avatar: "M", color: memberColors[0] },
+    { name: "Isla", avatar: "I", color: memberColors[1] },
+    { name: "Finn", avatar: "F", color: memberColors[2] },
+    { name: "Chloe", avatar: "C", color: memberColors[4] },
+  ]},
 ];
 
 const places = [
