@@ -35,11 +35,11 @@ const memberColors = [
 ];
 
 const events = [
-  { name: "Pub Crawl Poblado", time: "8:00 PM", venue: "Meeting at Parque Lleras", tag: "Pub Crawl", emoji: "🍻" },
-  { name: "Reggaeton Night", time: "10:00 PM", venue: "Club Babylon", tag: "Party", emoji: "🎶" },
-  { name: "Live Jazz at Calle 10", time: "7:30 PM", venue: "El Jazz Bar", tag: "Live Music", emoji: "🎷" },
-  { name: "Rooftop Sunset Session", time: "5:00 PM", venue: "Sky Lounge Laureles", tag: "Social", emoji: "🌅" },
-  { name: "Latin Dance Party", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃" },
+  { id: "e1", name: "Pub Crawl Poblado", desc: "Hit 5 bars with fellow backpackers — shots included!", time: "8:00 PM", venue: "Meeting at Parque Lleras", tag: "Pub Crawl", emoji: "🍻", going: 12 },
+  { id: "e2", name: "Reggaeton Night", desc: "The biggest reggaeton party in Medellín. Dress to impress.", time: "10:00 PM", venue: "Club Babylon", tag: "Party", emoji: "🎶", going: 28 },
+  { id: "e3", name: "Live Jazz at Calle 10", desc: "Intimate jazz session with local musicians & craft cocktails.", time: "7:30 PM", venue: "El Jazz Bar", tag: "Live Music", emoji: "🎷", going: 8 },
+  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Sky Lounge Laureles", tag: "Social", emoji: "🌅", going: 15 },
+  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22 },
 ];
 
 const initialPlans: Plan[] = [
@@ -87,6 +87,16 @@ export default function Index() {
   const [placeFilter, setPlaceFilter] = useState<PlaceFilter>("All");
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
+  const [joinedEvents, setJoinedEvents] = useState<Set<string>>(new Set());
+  const [eventGoingCounts, setEventGoingCounts] = useState<Record<string, number>>(
+    () => Object.fromEntries(events.map(e => [e.id, e.going]))
+  );
+
+  const handleJoinEvent = (id: string) => {
+    if (joinedEvents.has(id)) return;
+    setJoinedEvents(prev => new Set(prev).add(id));
+    setEventGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
 
   const filteredPlaces = placeFilter === "All" ? places : places.filter(p => p.category === placeFilter);
 
@@ -126,7 +136,7 @@ export default function Index() {
       </header>
 
       <main className="flex-1 overflow-y-auto px-5 pb-24">
-        {tab === "tonight" && <TonightTab />}
+        {tab === "tonight" && <TonightTab joinedEvents={joinedEvents} goingCounts={eventGoingCounts} onJoin={handleJoinEvent} />}
         {tab === "plans" && (
           <PlansTab
             plans={plans}
@@ -160,7 +170,15 @@ export default function Index() {
   );
 }
 
-function TonightTab() {
+function TonightTab({
+  joinedEvents,
+  goingCounts,
+  onJoin,
+}: {
+  joinedEvents: Set<string>;
+  goingCounts: Record<string, number>;
+  onJoin: (id: string) => void;
+}) {
   const [activeDate, setActiveDate] = useState(0);
   return (
     <div className="space-y-4">
@@ -176,17 +194,42 @@ function TonightTab() {
         ))}
       </div>
       <div className="space-y-3">
-        {events.map(e => (
-          <div key={e.name} className="bg-card rounded-xl p-4 flex gap-4 items-start">
-            <div className="text-3xl mt-0.5">{e.emoji}</div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{e.name}</h3>
-              <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5"><Clock className="w-3.5 h-3.5" />{e.time}</p>
-              <p className="text-sm text-muted-foreground truncate">{e.venue}</p>
+        {events.map(e => {
+          const hasJoined = joinedEvents.has(e.id);
+          const count = goingCounts[e.id] || e.going;
+          return (
+            <div key={e.id} className="bg-card rounded-xl p-4 space-y-3">
+              <div className="flex gap-4 items-start">
+                <div className="text-4xl mt-0.5 w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">{e.emoji}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-semibold text-foreground">{e.name}</h3>
+                    <Badge className="shrink-0 bg-primary/15 text-primary border-0 hover:bg-primary/20 text-[10px]">{e.tag}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">{e.desc}</p>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{e.time}</span>
+                    <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{e.venue}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-border/50">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5" /> {count} going
+                </span>
+                <Button
+                  size="sm"
+                  variant={hasJoined ? "secondary" : "default"}
+                  className="rounded-full px-5 h-8 text-xs font-semibold"
+                  onClick={() => onJoin(e.id)}
+                  disabled={hasJoined}
+                >
+                  {hasJoined ? "Going ✓" : "Join Event"}
+                </Button>
+              </div>
             </div>
-            <Badge className="shrink-0 bg-primary/15 text-primary border-0 hover:bg-primary/20">{e.tag}</Badge>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
