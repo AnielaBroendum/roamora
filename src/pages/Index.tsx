@@ -1,94 +1,15 @@
 import { useState } from "react";
-import { Calendar, Users, MapPin, Clock, ChevronDown, User, Plus } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { MapPin, ChevronDown, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-
-type Tab = "tonight" | "plans" | "places";
-type PlaceFilter = "All" | "Bars" | "Cheap eats" | "Hostels";
-
-interface PlanMember {
-  name: string;
-  avatar: string;
-  color: string;
-}
-
-interface Plan {
-  id: string;
-  organizer: string;
-  title: string;
-  description: string;
-  time: string;
-  members: PlanMember[];
-  avatar: string;
-}
-
-const memberColors = [
-  "bg-primary/20 text-primary",
-  "bg-destructive/20 text-destructive",
-  "bg-accent text-accent-foreground",
-  "bg-secondary text-secondary-foreground",
-  "bg-primary/30 text-primary",
-];
-
-const events = [
-  { id: "e1", name: "Pub Crawl Poblado", desc: "Hit 5 bars with fellow backpackers — shots included!", time: "8:00 PM", venue: "Meeting at Parque Lleras", tag: "Pub Crawl", emoji: "🍻", going: 12 },
-  { id: "e2", name: "Reggaeton Night", desc: "The biggest reggaeton party in Medellín. Dress to impress.", time: "10:00 PM", venue: "Club Babylon", tag: "Party", emoji: "🎶", going: 28 },
-  { id: "e3", name: "Live Jazz at Calle 10", desc: "Intimate jazz session with local musicians & craft cocktails.", time: "7:30 PM", venue: "El Jazz Bar", tag: "Live Music", emoji: "🎷", going: 8 },
-  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Sky Lounge Laureles", tag: "Social", emoji: "🌅", going: 15 },
-  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22 },
-];
-
-const initialPlans: Plan[] = [
-  { id: "1", organizer: "Alex", title: "Rooftop drinks in Poblado", description: "Chill vibes at Envy Rooftop, first round on me!", time: "Tonight, 7 PM", avatar: "A", members: [
-    { name: "Alex", avatar: "A", color: memberColors[0] },
-    { name: "Lena", avatar: "L", color: memberColors[1] },
-    { name: "Carlos", avatar: "C", color: memberColors[2] },
-    { name: "Yuki", avatar: "Y", color: memberColors[3] },
-  ]},
-  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", avatar: "M", members: [
-    { name: "Mia", avatar: "M", color: memberColors[1] },
-    { name: "Tom", avatar: "T", color: memberColors[0] },
-    { name: "Nina", avatar: "N", color: memberColors[4] },
-    { name: "Raj", avatar: "R", color: memberColors[2] },
-    { name: "Ava", avatar: "A", color: memberColors[3] },
-    { name: "Leo", avatar: "L", color: memberColors[0] },
-    { name: "Zoe", avatar: "Z", color: memberColors[1] },
-  ]},
-  { id: "3", organizer: "João", title: "Street food tour Laureles", description: "Exploring the best local eats in the neighborhood.", time: "Tomorrow, 6 PM", avatar: "J", members: [
-    { name: "João", avatar: "J", color: memberColors[2] },
-    { name: "Emma", avatar: "E", color: memberColors[0] },
-    { name: "Dan", avatar: "D", color: memberColors[4] },
-  ]},
-  { id: "4", organizer: "Sophie", title: "Sunrise hike to Piedra del Peñol", description: "Early start but worth it! Transport included.", time: "Saturday, 5 AM", avatar: "S", members: [
-    { name: "Sophie", avatar: "S", color: memberColors[3] },
-    { name: "Max", avatar: "M", color: memberColors[0] },
-    { name: "Isla", avatar: "I", color: memberColors[1] },
-    { name: "Finn", avatar: "F", color: memberColors[2] },
-    { name: "Chloe", avatar: "C", color: memberColors[4] },
-  ]},
-];
-
-const places = [
-  { name: "Envy Rooftop", category: "Bars", desc: "Stunning views & cocktails in Poblado", tag: "party", emoji: "🍸", going: 18 },
-  { name: "La Octava Bar", category: "Bars", desc: "Craft beer & live music nightly", tag: "chill", emoji: "🍺", going: 9 },
-  { name: "Salon Amador", category: "Bars", desc: "Underground cocktail bar with DJ sets", tag: "party", emoji: "🎵", going: 24 },
-  { name: "Mondongo's", category: "Cheap eats", desc: "Traditional bandeja paisa & local flavors", tag: "cheap", emoji: "🍲", going: 6 },
-  { name: "El Corral Gourmet", category: "Cheap eats", desc: "Best street burgers in Laureles", tag: "cheap", emoji: "🍔", going: 11 },
-  { name: "Arepa Lady", category: "Cheap eats", desc: "Stuffed arepas for under $2", tag: "cheap", emoji: "🫓", going: 14 },
-  { name: "Los Patios Hostel", category: "Hostels", desc: "Social hostel with pool & events", tag: "party", emoji: "🏠", going: 32 },
-  { name: "Happy Buddha Hostel", category: "Hostels", desc: "Chill vibes in Laureles neighborhood", tag: "chill", emoji: "🧘", going: 15 },
-  { name: "Viajero Hostel", category: "Hostels", desc: "Rooftop bar & city tours included", tag: "party", emoji: "🎒", going: 21 },
-];
-
-const datePills = ["Today", "Fri", "Sat", "Sun", "Mon"];
+import type { Tab, Plan } from "@/lib/types";
+import { memberColors, events, initialPlans } from "@/lib/data";
+import { BottomNav } from "@/components/BottomNav";
+import { TonightTab } from "@/components/TonightTab";
+import { PlansTab } from "@/components/PlansTab";
+import { PlacesTab } from "@/components/PlacesTab";
 
 export default function Index() {
   const [tab, setTab] = useState<Tab>("tonight");
-  const [placeFilter, setPlaceFilter] = useState<PlaceFilter>("All");
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
   const [joinedEvents, setJoinedEvents] = useState<Set<string>>(new Set());
@@ -101,8 +22,6 @@ export default function Index() {
     setJoinedEvents(prev => new Set(prev).add(id));
     setEventGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
-
-  const filteredPlaces = placeFilter === "All" ? places : places.filter(p => p.category === placeFilter);
 
   const handleJoin = (id: string) => {
     if (joinedPlans.has(id)) return;
@@ -126,256 +45,34 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
-      <header className="flex items-center justify-between px-5 pt-5 pb-3">
+    <div className="min-h-[100dvh] bg-background flex flex-col max-w-md mx-auto relative">
+      {/* Header */}
+      <header className="flex items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 sticky top-0 bg-background/80 backdrop-blur-xl z-40">
         <div>
           <h1 className="text-2xl font-bold text-primary tracking-tight">Roamora</h1>
-          <button className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
+          <button className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5 hover:text-foreground/70 transition-colors">
             <MapPin className="w-3.5 h-3.5" /> Medellín <ChevronDown className="w-3 h-3" />
           </button>
         </div>
-        <Avatar className="h-9 w-9 bg-secondary">
-          <AvatarFallback className="bg-secondary text-secondary-foreground text-sm"><User className="w-4 h-4" /></AvatarFallback>
+        <Avatar className="h-9 w-9 ring-2 ring-border">
+          <AvatarFallback className="bg-secondary text-secondary-foreground text-sm">
+            <User className="w-4 h-4" />
+          </AvatarFallback>
         </Avatar>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-5 pb-24">
-        {tab === "tonight" && <TonightTab joinedEvents={joinedEvents} goingCounts={eventGoingCounts} onJoin={handleJoinEvent} />}
-        {tab === "plans" && (
-          <PlansTab
-            plans={plans}
-            joinedPlans={joinedPlans}
-            onJoin={handleJoin}
-            onCreate={handleCreatePlan}
-          />
+      {/* Content */}
+      <main className="flex-1 px-5 pb-24 pt-1">
+        {tab === "tonight" && (
+          <TonightTab joinedEvents={joinedEvents} goingCounts={eventGoingCounts} onJoin={handleJoinEvent} />
         )}
-        {tab === "places" && <PlacesTab filter={placeFilter} setFilter={setPlaceFilter} places={filteredPlaces} />}
+        {tab === "plans" && (
+          <PlansTab plans={plans} joinedPlans={joinedPlans} onJoin={handleJoin} onCreate={handleCreatePlan} />
+        )}
+        {tab === "places" && <PlacesTab />}
       </main>
 
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card/95 backdrop-blur border-t border-border">
-        <div className="flex justify-around py-2">
-          {([
-            { id: "tonight" as Tab, icon: Calendar, label: "Tonight" },
-            { id: "plans" as Tab, icon: Users, label: "Plans" },
-            { id: "places" as Tab, icon: MapPin, label: "Places" },
-          ]).map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex flex-col items-center gap-0.5 px-6 py-1.5 rounded-xl transition-colors ${tab === t.id ? "text-primary" : "text-muted-foreground"}`}
-            >
-              <t.icon className="w-5 h-5" />
-              <span className="text-xs font-medium">{t.label}</span>
-            </button>
-          ))}
-        </div>
-      </nav>
-    </div>
-  );
-}
-
-function TonightTab({
-  joinedEvents,
-  goingCounts,
-  onJoin,
-}: {
-  joinedEvents: Set<string>;
-  goingCounts: Record<string, number>;
-  onJoin: (id: string) => void;
-}) {
-  const [activeDate, setActiveDate] = useState(0);
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-        {datePills.map((d, i) => (
-          <button
-            key={d}
-            onClick={() => setActiveDate(i)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${i === activeDate ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
-          >
-            {d}
-          </button>
-        ))}
-      </div>
-      <div className="space-y-3">
-        {events.map(e => {
-          const hasJoined = joinedEvents.has(e.id);
-          const count = goingCounts[e.id] || e.going;
-          return (
-            <div key={e.id} className="bg-card rounded-xl p-4 space-y-3">
-              <div className="flex gap-4 items-start">
-                <div className="text-4xl mt-0.5 w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">{e.emoji}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-foreground">{e.name}</h3>
-                    <Badge className="shrink-0 bg-primary/15 text-primary border-0 hover:bg-primary/20 text-[10px]">{e.tag}</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">{e.desc}</p>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{e.time}</span>
-                    <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{e.venue}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-1 border-t border-border/50">
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5" /> {count} going
-                </span>
-                <Button
-                  size="sm"
-                  variant={hasJoined ? "secondary" : "default"}
-                  className="rounded-full px-5 h-8 text-xs font-semibold"
-                  onClick={() => onJoin(e.id)}
-                  disabled={hasJoined}
-                >
-                  {hasJoined ? "Going ✓" : "Join Event"}
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function PlansTab({
-  plans,
-  joinedPlans,
-  onJoin,
-  onCreate,
-}: {
-  plans: Plan[];
-  joinedPlans: Set<string>;
-  onJoin: (id: string) => void;
-  onCreate: (plan: Omit<Plan, "id" | "organizer" | "avatar" | "members">) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [time, setTime] = useState("");
-
-  const handleSubmit = () => {
-    if (!title.trim() || !time.trim()) return;
-    onCreate({ title: title.trim(), description: description.trim(), time: time.trim() });
-    setTitle("");
-    setDescription("");
-    setTime("");
-    setOpen(false);
-  };
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-sm">Join other travelers or start your own plan ✌️</p>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="rounded-full h-8 px-3 text-xs font-semibold gap-1">
-              <Plus className="w-3.5 h-3.5" /> Create
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-sm mx-auto">
-            <DialogHeader>
-              <DialogTitle>Create a Plan</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <Input placeholder="Title (e.g. Going out tonight)" value={title} onChange={e => setTitle(e.target.value)} />
-              <Textarea placeholder="Description (optional)" value={description} onChange={e => setDescription(e.target.value)} className="min-h-[60px]" />
-              <Input placeholder="Time (e.g. Tonight, 9 PM)" value={time} onChange={e => setTime(e.target.value)} />
-              <Button onClick={handleSubmit} className="w-full" disabled={!title.trim() || !time.trim()}>
-                Create Plan
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      {plans.map(p => {
-        const hasJoined = joinedPlans.has(p.id);
-        return (
-          <div key={p.id} className="bg-card rounded-xl p-4 space-y-3">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary/20 text-primary text-sm font-semibold">{p.avatar}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground truncate">{p.title}</h3>
-                <p className="text-xs text-muted-foreground">{p.organizer} · {p.time}</p>
-              </div>
-            </div>
-            {p.description && (
-              <p className="text-sm text-muted-foreground">{p.description}</p>
-            )}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {p.members.slice(0, 5).map((m, i) => (
-                    <Avatar key={i} className="h-7 w-7 border-2 border-card">
-                      <AvatarFallback className={`${m.color} text-[10px] font-semibold`}>{m.avatar}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                  {p.members.length > 5 && (
-                    <Avatar className="h-7 w-7 border-2 border-card">
-                      <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-semibold">+{p.members.length - 5}</AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-                <span className="text-xs text-muted-foreground">{p.members.length} joined</span>
-              </div>
-              <Button
-                size="sm"
-                variant={hasJoined ? "secondary" : "default"}
-                className="rounded-full px-5 h-8 text-xs font-semibold"
-                onClick={() => onJoin(p.id)}
-                disabled={hasJoined}
-              >
-                {hasJoined ? "Joined ✓" : "Join"}
-              </Button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function PlacesTab({ filter, setFilter, places: filteredPlaces }: { filter: PlaceFilter; setFilter: (f: PlaceFilter) => void; places: typeof places }) {
-  const filters: PlaceFilter[] = ["All", "Bars", "Cheap eats", "Hostels"];
-  const tagColors: Record<string, string> = {
-    party: "bg-primary/15 text-primary border-0",
-    chill: "bg-accent text-accent-foreground border-0",
-    cheap: "bg-secondary text-secondary-foreground border-0",
-  };
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        {filters.map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${f === filter ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-      <div className="space-y-3">
-        {filteredPlaces.map(p => (
-          <div key={p.name} className="bg-card rounded-xl p-4 flex gap-4 items-start">
-            <div className="text-3xl w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">{p.emoji}</div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                <Badge className={`shrink-0 text-[10px] ${tagColors[p.tag] || ""}`}>{p.tag}</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mt-0.5">{p.desc}</p>
-              <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
-                <Users className="w-3.5 h-3.5" />
-                <span>{p.going} people going</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <BottomNav tab={tab} setTab={setTab} />
     </div>
   );
 }
