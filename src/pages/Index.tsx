@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 type Tab = "tonight" | "plans" | "places";
-type PlaceFilter = "All" | "Bars" | "Food" | "Hostels";
+type PlaceFilter = "All" | "Bars" | "Cheap eats" | "Hostels";
 
 interface PlanMember {
   name: string;
