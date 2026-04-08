@@ -203,7 +203,6 @@ export function PlansTab({
               </Button>
             </div>
           </DialogContent>
-          </DialogContent>
         </Dialog>
       </div>
 
