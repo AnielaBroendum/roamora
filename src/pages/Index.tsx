@@ -339,7 +339,12 @@ function PlansTab({
 }
 
 function PlacesTab({ filter, setFilter, places: filteredPlaces }: { filter: PlaceFilter; setFilter: (f: PlaceFilter) => void; places: typeof places }) {
-  const filters: PlaceFilter[] = ["All", "Bars", "Food", "Hostels"];
+  const filters: PlaceFilter[] = ["All", "Bars", "Cheap eats", "Hostels"];
+  const tagColors: Record<string, string> = {
+    party: "bg-primary/15 text-primary border-0",
+    chill: "bg-accent text-accent-foreground border-0",
+    cheap: "bg-secondary text-secondary-foreground border-0",
+  };
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -356,14 +361,17 @@ function PlacesTab({ filter, setFilter, places: filteredPlaces }: { filter: Plac
       <div className="space-y-3">
         {filteredPlaces.map(p => (
           <div key={p.name} className="bg-card rounded-xl p-4 flex gap-4 items-start">
-            <div className="text-3xl">{p.emoji}</div>
+            <div className="text-3xl w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">{p.emoji}</div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                <Badge variant="outline" className="shrink-0 text-xs border-border text-muted-foreground">{p.category}</Badge>
+                <Badge className={`shrink-0 text-[10px] ${tagColors[p.tag] || ""}`}>{p.tag}</Badge>
               </div>
               <p className="text-sm text-muted-foreground mt-0.5">{p.desc}</p>
-              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" />{p.distance}</p>
+              <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
+                <Users className="w-3.5 h-3.5" />
+                <span>{p.going} people going</span>
+              </div>
             </div>
           </div>
         ))}
