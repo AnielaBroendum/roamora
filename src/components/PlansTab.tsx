@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, MapPin, TrendingUp, Navigation } from "lucide-react";
+import { Plus, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -115,10 +115,8 @@ export function PlansTab({
                 className="bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
                 style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "backwards" }}
               >
-                {/* Labels */}
                 {p.label && (
-                  <span className="text-[11px] font-semibold text-primary flex items-center gap-1">
-                    {!p.label.startsWith("🔥") && <TrendingUp className="w-3 h-3" />}
+                  <span className="text-[11px] font-semibold text-primary">
                     {p.label}
                   </span>
                 )}
@@ -137,7 +135,9 @@ export function PlansTab({
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <p className="text-xs text-muted-foreground">{p.organizer} · {p.time}</p>
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground/70">{p.organizer}</span> is going · {p.time}
+                      </p>
                       {p.distance && (
                         <span className="text-[11px] text-muted-foreground flex items-center gap-0.5">
                           <Navigation className="w-3 h-3" /> {p.distance}
@@ -148,7 +148,7 @@ export function PlansTab({
                 </div>
 
                 {p.description && (
-                  <p className="text-[13px] text-muted-foreground leading-relaxed">{p.description}</p>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">"{p.description}"</p>
                 )}
 
                 <div className="flex items-center justify-between pt-2 border-t border-border/40">
@@ -182,7 +182,7 @@ export function PlansTab({
                     onClick={() => handleJoin(p.id)}
                     disabled={hasJoined}
                   >
-                    {hasJoined ? "Joined ✓" : "Join"}
+                    {hasJoined ? "Joined ✓" : "I'm in"}
                   </Button>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function PlansTab({
         <ParticipantModal
           open={modalOpen}
           onOpenChange={setModalOpen}
-          title={`Joined: ${modalPlan.title}`}
+          title={`Going: ${modalPlan.title}`}
           participants={modalPlan.members}
         />
       )}
