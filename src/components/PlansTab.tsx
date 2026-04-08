@@ -38,6 +38,7 @@ export function PlansTab({
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [celebratingId, setCelebratingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPlan, setModalPlan] = useState<Plan | null>(null);
 
@@ -65,8 +66,10 @@ export function PlansTab({
   const handleJoin = (id: string) => {
     if (joinedPlans.has(id)) return;
     setAnimatingId(id);
+    setCelebratingId(id);
     onJoin(id);
     setTimeout(() => setAnimatingId(null), 600);
+    setTimeout(() => setCelebratingId(null), 800);
   };
 
   const resolvedTime = time === "Custom" ? customTime.trim() : time;
@@ -89,12 +92,12 @@ export function PlansTab({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 tab-content">
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground text-sm">Join travelers or start your own ✌️</p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="rounded-full h-8 px-3.5 text-xs font-semibold gap-1.5 shadow-md shadow-primary/20">
+            <Button size="sm" className="rounded-full h-8 px-3.5 text-xs font-semibold gap-1.5 shadow-md shadow-primary/20 btn-press">
               <Plus className="w-3.5 h-3.5" /> Create
             </Button>
           </DialogTrigger>
@@ -103,7 +106,6 @@ export function PlansTab({
               <DialogTitle className="text-lg">What's the plan? 🤙</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-1">
-              {/* Title */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">What are you doing?</label>
                 <Input
@@ -115,7 +117,6 @@ export function PlansTab({
                 />
               </div>
 
-              {/* Time quick picks */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">When?</label>
                 <div className="flex gap-2">
@@ -123,7 +124,7 @@ export function PlansTab({
                     <button
                       key={t}
                       onClick={() => setTime(t)}
-                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 btn-press ${
                         time === t
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -143,7 +144,6 @@ export function PlansTab({
                 )}
               </div>
 
-              {/* Tags */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">Vibe <span className="text-muted-foreground/60">(optional)</span></label>
                 <div className="flex gap-2 flex-wrap">
@@ -151,7 +151,7 @@ export function PlansTab({
                     <button
                       key={t.key}
                       onClick={() => setTag(tag === t.key ? "" : t.key)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 btn-press ${
                         tag === t.key
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -163,7 +163,6 @@ export function PlansTab({
                 </div>
               </div>
 
-              {/* Location */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">Where? <span className="text-muted-foreground/60">(optional)</span></label>
                 <div className="relative">
@@ -183,7 +182,6 @@ export function PlansTab({
                 </div>
               </div>
 
-              {/* Description */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">Add a note <span className="text-muted-foreground/60">(optional)</span></label>
                 <Textarea
@@ -196,7 +194,7 @@ export function PlansTab({
 
               <Button
                 onClick={handleSubmit}
-                className="w-full rounded-full h-10 font-semibold shadow-md shadow-primary/20"
+                className="w-full rounded-full h-10 font-semibold shadow-md shadow-primary/20 btn-press"
                 disabled={!title.trim() || !resolvedTime}
               >
                 Start plan 🚀
@@ -213,81 +211,91 @@ export function PlansTab({
           {plans.map((p, idx) => {
             const hasJoined = joinedPlans.has(p.id);
             const isAnimating = animatingId === p.id;
+            const isCelebrating = celebratingId === p.id;
+            const isPopular = p.members.length >= 5;
+
             return (
               <div
                 key={p.id}
-                className="bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300"
-                style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "backwards" }}
+                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 relative overflow-hidden ${
+                  isPopular ? "ring-1 ring-primary/10" : ""
+                } ${isCelebrating ? "animate-join-celebrate" : ""}`}
+                style={{ animationDelay: `${idx * 80}ms`, animationFillMode: "backwards" }}
               >
-                {p.label && (
-                  <span className="text-[11px] font-semibold text-primary">
-                    {p.label}
-                  </span>
-                )}
+                {isPopular && <div className="absolute inset-0 shimmer-overlay pointer-events-none" />}
 
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-primary/20 text-primary text-sm font-semibold">{p.avatar}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-foreground truncate leading-tight">{p.title}</h3>
-                      {p.tag && (
-                        <Badge className={`shrink-0 text-[10px] font-medium ${tagConfig[p.tag]?.color || ""}`}>
-                          {tagConfig[p.tag]?.emoji} {tagConfig[p.tag]?.label}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <p className="text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground/70">{p.organizer}</span> is going · {p.time}
-                      </p>
-                      {p.distance && (
-                        <span className="text-[11px] text-muted-foreground flex items-center gap-0.5">
-                          <Navigation className="w-3 h-3" /> {p.distance}
-                        </span>
-                      )}
+                <div className="relative z-10 space-y-3">
+                  {p.label && (
+                    <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-dot" />
+                      {p.label}
+                    </span>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary/20 text-primary text-sm font-semibold">{p.avatar}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-foreground truncate leading-tight">{p.title}</h3>
+                        {p.tag && (
+                          <Badge className={`shrink-0 text-[10px] font-medium ${tagConfig[p.tag]?.color || ""}`}>
+                            {tagConfig[p.tag]?.emoji} {tagConfig[p.tag]?.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium text-foreground/70">{p.organizer}</span> is going · {p.time}
+                        </p>
+                        {p.distance && (
+                          <span className="text-[11px] text-muted-foreground flex items-center gap-0.5">
+                            <Navigation className="w-3 h-3" /> {p.distance}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {p.description && (
-                  <p className="text-[13px] text-muted-foreground leading-relaxed">"{p.description}"</p>
-                )}
+                  {p.description && (
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">"{p.description}"</p>
+                  )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-border/40">
-                  <button
-                    onClick={() => { setModalPlan(p); setModalOpen(true); }}
-                    className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
-                  >
-                    <div className="flex -space-x-2">
-                      {p.members.slice(0, 5).map((m, i) => (
-                        <Avatar key={i} className="h-7 w-7 border-2 border-card">
-                          <AvatarFallback className={`${m.color} text-[10px] font-semibold`}>{m.avatar}</AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {p.members.length > 5 && (
-                        <Avatar className="h-7 w-7 border-2 border-card">
-                          <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-semibold">+{p.members.length - 5}</AvatarFallback>
-                        </Avatar>
-                      )}
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground/70">{p.members.slice(0, 2).map(m => m.name).join(", ")}</span>
-                      {p.members.length > 2 && <> + <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{p.members.length - 2}</span> others</>}
-                    </span>
-                  </button>
-                  <Button
-                    size="sm"
-                    variant={hasJoined ? "secondary" : "default"}
-                    className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 ${
-                      hasJoined ? "" : "shadow-md shadow-primary/20"
-                    } ${isAnimating ? "scale-95" : ""}`}
-                    onClick={() => handleJoin(p.id)}
-                    disabled={hasJoined}
-                  >
-                    {hasJoined ? "Joined ✓" : "I'm in"}
-                  </Button>
+                  <div className="flex items-center justify-between pt-2 border-t border-border/40">
+                    <button
+                      onClick={() => { setModalPlan(p); setModalOpen(true); }}
+                      className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+                    >
+                      <div className="flex -space-x-2">
+                        {p.members.slice(0, 5).map((m, i) => (
+                          <Avatar key={i} className="h-7 w-7 border-2 border-card">
+                            <AvatarFallback className={`${m.color} text-[10px] font-semibold`}>{m.avatar}</AvatarFallback>
+                          </Avatar>
+                        ))}
+                        {p.members.length > 5 && (
+                          <Avatar className="h-7 w-7 border-2 border-card">
+                            <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-semibold">+{p.members.length - 5}</AvatarFallback>
+                          </Avatar>
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground/70">{p.members.slice(0, 2).map(m => m.name).join(", ")}</span>
+                        {p.members.length > 2 && <> + <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{p.members.length - 2}</span> others</>}
+                      </span>
+                    </button>
+                    <Button
+                      size="sm"
+                      variant={hasJoined ? "secondary" : "default"}
+                      className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 btn-press ${
+                        hasJoined ? "" : "shadow-md shadow-primary/20"
+                      } ${isAnimating ? "scale-95" : ""}`}
+                      onClick={() => handleJoin(p.id)}
+                      disabled={hasJoined}
+                    >
+                      {hasJoined ? "Joined ✓" : "I'm in"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             );

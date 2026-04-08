@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { MapPin, ChevronDown, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Tab, Plan } from "@/lib/types";
@@ -54,6 +54,15 @@ export default function Index() {
     setJoinedPlans(prev => new Set(prev).add(newPlan.id));
   };
 
+  // Simulated activity bumps
+  const handleEventSimBump = useCallback((id: string) => {
+    setEventGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  }, []);
+
+  const handlePlaceSimBump = useCallback((id: string) => {
+    setPlaceGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  }, []);
+
   const navigateToPlace = (venueId: string) => {
     setTab("places");
   };
@@ -85,6 +94,7 @@ export default function Index() {
             goingCounts={eventGoingCounts}
             onJoin={handleJoinEvent}
             onNavigateToPlace={navigateToPlace}
+            onSimBump={handleEventSimBump}
           />
         )}
         {tab === "plans" && (
@@ -96,6 +106,7 @@ export default function Index() {
             placeCounts={placeGoingCounts}
             onJoinPlace={handleJoinPlace}
             onNavigateToEvent={navigateToEvent}
+            onSimBump={handlePlaceSimBump}
           />
         )}
       </main>
