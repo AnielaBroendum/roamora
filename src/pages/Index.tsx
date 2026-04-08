@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MapPin, ChevronDown, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Tab, Plan } from "@/lib/types";
-import { memberColors, events, initialPlans } from "@/lib/data";
+import { memberColors, events, initialPlans, places } from "@/lib/data";
 import { BottomNav } from "@/components/BottomNav";
 import { TonightTab } from "@/components/TonightTab";
 import { PlansTab } from "@/components/PlansTab";
@@ -13,14 +13,24 @@ export default function Index() {
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
   const [joinedEvents, setJoinedEvents] = useState<Set<string>>(new Set());
+  const [joinedPlaces, setJoinedPlaces] = useState<Set<string>>(new Set());
   const [eventGoingCounts, setEventGoingCounts] = useState<Record<string, number>>(
     () => Object.fromEntries(events.map(e => [e.id, e.going]))
+  );
+  const [placeGoingCounts, setPlaceGoingCounts] = useState<Record<string, number>>(
+    () => Object.fromEntries(places.map(p => [p.id, p.going]))
   );
 
   const handleJoinEvent = (id: string) => {
     if (joinedEvents.has(id)) return;
     setJoinedEvents(prev => new Set(prev).add(id));
     setEventGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
+
+  const handleJoinPlace = (id: string) => {
+    if (joinedPlaces.has(id)) return;
+    setJoinedPlaces(prev => new Set(prev).add(id));
+    setPlaceGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
   const handleJoin = (id: string) => {
@@ -44,9 +54,16 @@ export default function Index() {
     setJoinedPlans(prev => new Set(prev).add(newPlan.id));
   };
 
+  const navigateToPlace = (venueId: string) => {
+    setTab("places");
+  };
+
+  const navigateToEvent = (eventId: string) => {
+    setTab("tonight");
+  };
+
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col max-w-md mx-auto relative">
-      {/* Header */}
       <header className="flex items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 sticky top-0 bg-background/80 backdrop-blur-xl z-40">
         <div>
           <h1 className="text-2xl font-bold text-primary tracking-tight">Roamora</h1>
@@ -61,15 +78,26 @@ export default function Index() {
         </Avatar>
       </header>
 
-      {/* Content */}
       <main className="flex-1 px-5 pb-24 pt-1">
         {tab === "tonight" && (
-          <TonightTab joinedEvents={joinedEvents} goingCounts={eventGoingCounts} onJoin={handleJoinEvent} />
+          <TonightTab
+            joinedEvents={joinedEvents}
+            goingCounts={eventGoingCounts}
+            onJoin={handleJoinEvent}
+            onNavigateToPlace={navigateToPlace}
+          />
         )}
         {tab === "plans" && (
           <PlansTab plans={plans} joinedPlans={joinedPlans} onJoin={handleJoin} onCreate={handleCreatePlan} />
         )}
-        {tab === "places" && <PlacesTab />}
+        {tab === "places" && (
+          <PlacesTab
+            joinedPlaces={joinedPlaces}
+            placeCounts={placeGoingCounts}
+            onJoinPlace={handleJoinPlace}
+            onNavigateToEvent={navigateToEvent}
+          />
+        )}
       </main>
 
       <BottomNav tab={tab} setTab={setTab} />
