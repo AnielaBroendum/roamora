@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Plus, Navigation } from "lucide-react";
+import { Plus, Navigation, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Plan, PlanTag } from "@/lib/types";
+import { places } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
 
