@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 type Tab = "tonight" | "plans" | "places";
-type PlaceFilter = "All" | "Bars" | "Food" | "Hostels";
+type PlaceFilter = "All" | "Bars" | "Cheap eats" | "Hostels";
 
 interface PlanMember {
   name: string;
@@ -73,11 +73,15 @@ const initialPlans: Plan[] = [
 ];
 
 const places = [
-  { name: "Envy Rooftop", category: "Bars", desc: "Stunning views & cocktails in Poblado", distance: "0.8 km", emoji: "🍸" },
-  { name: "Mondongo's", category: "Food", desc: "Traditional bandeja paisa & local flavors", distance: "1.2 km", emoji: "🍲" },
-  { name: "Los Patios Hostel", category: "Hostels", desc: "Social hostel with pool & events", distance: "0.3 km", emoji: "🏠" },
-  { name: "La Octava Bar", category: "Bars", desc: "Craft beer & live music nightly", distance: "0.5 km", emoji: "🍺" },
-  { name: "Happy Buddha Hostel", category: "Hostels", desc: "Chill vibes in Laureles neighborhood", distance: "2.1 km", emoji: "🧘" },
+  { name: "Envy Rooftop", category: "Bars", desc: "Stunning views & cocktails in Poblado", tag: "party", emoji: "🍸", going: 18 },
+  { name: "La Octava Bar", category: "Bars", desc: "Craft beer & live music nightly", tag: "chill", emoji: "🍺", going: 9 },
+  { name: "Salon Amador", category: "Bars", desc: "Underground cocktail bar with DJ sets", tag: "party", emoji: "🎵", going: 24 },
+  { name: "Mondongo's", category: "Cheap eats", desc: "Traditional bandeja paisa & local flavors", tag: "cheap", emoji: "🍲", going: 6 },
+  { name: "El Corral Gourmet", category: "Cheap eats", desc: "Best street burgers in Laureles", tag: "cheap", emoji: "🍔", going: 11 },
+  { name: "Arepa Lady", category: "Cheap eats", desc: "Stuffed arepas for under $2", tag: "cheap", emoji: "🫓", going: 14 },
+  { name: "Los Patios Hostel", category: "Hostels", desc: "Social hostel with pool & events", tag: "party", emoji: "🏠", going: 32 },
+  { name: "Happy Buddha Hostel", category: "Hostels", desc: "Chill vibes in Laureles neighborhood", tag: "chill", emoji: "🧘", going: 15 },
+  { name: "Viajero Hostel", category: "Hostels", desc: "Rooftop bar & city tours included", tag: "party", emoji: "🎒", going: 21 },
 ];
 
 const datePills = ["Today", "Fri", "Sat", "Sun", "Mon"];
@@ -335,7 +339,12 @@ function PlansTab({
 }
 
 function PlacesTab({ filter, setFilter, places: filteredPlaces }: { filter: PlaceFilter; setFilter: (f: PlaceFilter) => void; places: typeof places }) {
-  const filters: PlaceFilter[] = ["All", "Bars", "Food", "Hostels"];
+  const filters: PlaceFilter[] = ["All", "Bars", "Cheap eats", "Hostels"];
+  const tagColors: Record<string, string> = {
+    party: "bg-primary/15 text-primary border-0",
+    chill: "bg-accent text-accent-foreground border-0",
+    cheap: "bg-secondary text-secondary-foreground border-0",
+  };
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -352,14 +361,17 @@ function PlacesTab({ filter, setFilter, places: filteredPlaces }: { filter: Plac
       <div className="space-y-3">
         {filteredPlaces.map(p => (
           <div key={p.name} className="bg-card rounded-xl p-4 flex gap-4 items-start">
-            <div className="text-3xl">{p.emoji}</div>
+            <div className="text-3xl w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">{p.emoji}</div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                <Badge variant="outline" className="shrink-0 text-xs border-border text-muted-foreground">{p.category}</Badge>
+                <Badge className={`shrink-0 text-[10px] ${tagColors[p.tag] || ""}`}>{p.tag}</Badge>
               </div>
               <p className="text-sm text-muted-foreground mt-0.5">{p.desc}</p>
-              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" />{p.distance}</p>
+              <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
+                <Users className="w-3.5 h-3.5" />
+                <span>{p.going} people going</span>
+              </div>
             </div>
           </div>
         ))}
