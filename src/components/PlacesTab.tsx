@@ -92,7 +92,6 @@ export function PlacesTab({
                   </div>
                 </div>
 
-                {/* Linked events */}
                 {linkedEvents.length > 0 && (
                   <div className="space-y-1.5">
                     {linkedEvents.map(ev => ev && (
@@ -112,7 +111,7 @@ export function PlacesTab({
                 <div className="flex items-center justify-between pt-2 border-t border-border/40">
                   <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5" />
-                    <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{count}</span> people going tonight
+                    <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{count}</span> going tonight
                   </span>
                   <Button
                     size="sm"

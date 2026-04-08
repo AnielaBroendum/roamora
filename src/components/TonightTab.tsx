@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Clock, MapPin, Users, TrendingUp } from "lucide-react";
+import { Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { events, datePills, memberColors } from "@/lib/data";
+import { events, memberColors } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
 import type { PlanMember } from "@/lib/types";
@@ -19,7 +19,6 @@ export function TonightTab({
   onJoin: (id: string) => void;
   onNavigateToPlace?: (venueId: string) => void;
 }) {
-  const [activeDate, setActiveDate] = useState(0);
   const [loading, setLoading] = useState(true);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -43,9 +42,8 @@ export function TonightTab({
       avatar: name[0],
       color: memberColors[i % memberColors.length],
     }));
-    // Fill remaining with generic names
     for (let i = participants.length; i < Math.min(count, 12); i++) {
-      participants.push({ name: `Traveler ${i + 1}`, avatar: `T`, color: memberColors[i % memberColors.length] });
+      participants.push({ name: `Traveler ${i + 1}`, avatar: "T", color: memberColors[i % memberColors.length] });
     }
     setModalEvent({ title: eventName, participants });
     setModalOpen(true);
@@ -53,21 +51,7 @@ export function TonightTab({
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
-        {datePills.map((d, i) => (
-          <button
-            key={d}
-            onClick={() => setActiveDate(i)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-              i === activeDate
-                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            {d}
-          </button>
-        ))}
-      </div>
+      <p className="text-muted-foreground text-sm">What's happening tonight ✨</p>
 
       {loading ? (
         <CardSkeleton count={3} />
@@ -87,21 +71,10 @@ export function TonightTab({
                 }`}
                 style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "backwards" }}
               >
-                {/* Labels row */}
-                {(e.label || (e.recentJoiners && e.recentJoiners.length > 0)) && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {e.label && (
-                      <span className="text-[11px] font-semibold text-primary flex items-center gap-1">
-                        {!e.label.startsWith("🔥") && !e.label.startsWith("Starts") && <TrendingUp className="w-3 h-3" />}
-                        {e.label}
-                      </span>
-                    )}
-                    {e.recentJoiners && e.recentJoiners.length > 0 && (
-                      <span className="text-[11px] text-muted-foreground animate-pulse">
-                        {e.recentJoiners.length} people just joined
-                      </span>
-                    )}
-                  </div>
+                {e.label && (
+                  <span className="text-[11px] font-semibold text-primary">
+                    {e.label}
+                  </span>
                 )}
 
                 <div className="flex gap-3.5 items-start">
@@ -126,7 +99,7 @@ export function TonightTab({
                         className={`flex items-center gap-1 truncate ${e.venueId ? "hover:text-primary transition-colors cursor-pointer" : ""}`}
                       >
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate underline-offset-2 hover:underline">{e.venue}</span>
+                        <span className="truncate">{e.venue}</span>
                       </button>
                     </div>
                   </div>
@@ -153,7 +126,10 @@ export function TonightTab({
                           {count > 2 && <> + <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{count - 2}</span> others</>}
                         </>
                       ) : (
-                        <><span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{count}</span> going</>
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5" />
+                          <span className={`font-medium text-foreground/70 ${isAnimating ? "animate-bounce-count" : ""}`}>{count}</span> going tonight
+                        </span>
                       )}
                     </span>
                   </button>
@@ -161,12 +137,12 @@ export function TonightTab({
                     size="sm"
                     variant={hasJoined ? "secondary" : "default"}
                     className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 ${
-                      hasJoined ? "" : "shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30"
+                      hasJoined ? "" : "shadow-md shadow-primary/20"
                     } ${isAnimating ? "scale-95" : ""}`}
                     onClick={() => handleJoin(e.id)}
                     disabled={hasJoined}
                   >
-                    {hasJoined ? "Going ✓" : "Join Event"}
+                    {hasJoined ? "Going ✓" : "Join them"}
                   </Button>
                 </div>
               </div>

@@ -12,8 +12,8 @@ export const events: EventItem[] = [
   { id: "e1", name: "Pub Crawl Poblado", desc: "Hit 5 bars with fellow backpackers — shots included!", time: "8:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Pub Crawl", emoji: "🍻", going: 34, label: "🔥 Popular tonight", featured: true, recentJoiners: ["Alex", "Mia", "Carlos"] },
   { id: "e2", name: "Reggaeton Night", desc: "The biggest reggaeton party in Medellín. Dress to impress.", time: "10:00 PM", venue: "Salon Amador", venueId: "p3", tag: "Party", emoji: "🎶", going: 52, label: "Filling up fast", featured: true, recentJoiners: ["Tom", "Lena"] },
   { id: "e3", name: "Live Jazz at Calle 10", desc: "Intimate jazz session with local musicians & craft cocktails.", time: "7:30 PM", venue: "La Octava Bar", venueId: "p2", tag: "Live Music", emoji: "🎷", going: 8, recentJoiners: ["Nina"] },
-  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Social", emoji: "🌅", going: 15, label: "Starts in 20 min", recentJoiners: ["Sophie", "Max"] },
-  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22, label: "Trending now", recentJoiners: ["João", "Emma", "Ava"] },
+  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Social", emoji: "🌅", going: 15, recentJoiners: ["Sophie", "Max"] },
+  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22, label: "Trending", recentJoiners: ["João", "Emma", "Ava"] },
 ];
 
 export const initialPlans: Plan[] = [
@@ -23,7 +23,7 @@ export const initialPlans: Plan[] = [
     { name: "Carlos", avatar: "C", color: memberColors[2] },
     { name: "Yuki", avatar: "Y", color: memberColors[3] },
   ]},
-  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", avatar: "M", tag: "party", distance: "1.2 km", eventId: "e5", label: "Filling up fast", members: [
+  { id: "2", organizer: "Mia", title: "Salsa night crew", description: "Beginners welcome! We'll hit Salsa Club Centro.", time: "Tonight, 9 PM", avatar: "M", tag: "party", distance: "1.2 km", eventId: "e5", label: "Filling up", members: [
     { name: "Mia", avatar: "M", color: memberColors[1] },
     { name: "Tom", avatar: "T", color: memberColors[0] },
     { name: "Nina", avatar: "N", color: memberColors[4] },
