@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Plus, Navigation } from "lucide-react";
+import { Plus, Navigation, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Plan, PlanTag } from "@/lib/types";
+import { places } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
 
@@ -33,11 +33,29 @@ export function PlansTab({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [time, setTime] = useState("");
+  const [customTime, setCustomTime] = useState("");
   const [tag, setTag] = useState<PlanTag | "">("");
+  const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPlan, setModalPlan] = useState<Plan | null>(null);
+
+  const titlePlaceholders = [
+    "Drinks in Poblado",
+    "Dinner tonight?",
+    "Salsa night crew",
+    "Anyone up for tacos?",
+  ];
+  const [placeholderIdx] = useState(() => Math.floor(Math.random() * titlePlaceholders.length));
+
+  const timeOptions = ["Tonight", "Tomorrow", "Custom"];
+  const tagOptions: { key: PlanTag; emoji: string; label: string }[] = [
+    { key: "party", emoji: "🎉", label: "Party" },
+    { key: "food", emoji: "🍜", label: "Food" },
+    { key: "chill", emoji: "😌", label: "Chill" },
+    { key: "adventure", emoji: "🏔️", label: "Adventure" },
+  ];
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 500);
@@ -51,18 +69,22 @@ export function PlansTab({
     setTimeout(() => setAnimatingId(null), 600);
   };
 
+  const resolvedTime = time === "Custom" ? customTime.trim() : time;
+
   const handleSubmit = () => {
-    if (!title.trim() || !time.trim()) return;
+    if (!title.trim() || !resolvedTime) return;
     onCreate({
       title: title.trim(),
       description: description.trim(),
-      time: time.trim(),
+      time: resolvedTime,
       tag: (tag as PlanTag) || undefined,
     });
     setTitle("");
     setDescription("");
     setTime("");
+    setCustomTime("");
     setTag("");
+    setLocation("");
     setOpen(false);
   };
 
@@ -78,24 +100,106 @@ export function PlansTab({
           </DialogTrigger>
           <DialogContent className="max-w-sm mx-auto">
             <DialogHeader>
-              <DialogTitle>Create a Plan</DialogTitle>
+              <DialogTitle className="text-lg">What's the plan? 🤙</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <Input placeholder="Title (e.g. Going out tonight)" value={title} onChange={e => setTitle(e.target.value)} />
-              <Textarea placeholder="Description (optional)" value={description} onChange={e => setDescription(e.target.value)} className="min-h-[60px]" />
-              <Input placeholder="Time (e.g. Tonight, 9 PM)" value={time} onChange={e => setTime(e.target.value)} />
-              <Select value={tag} onValueChange={v => setTag(v as PlanTag)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tag (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(tagConfig).map(([key, val]) => (
-                    <SelectItem key={key} value={key}>{val.emoji} {val.label}</SelectItem>
+            <div className="space-y-4 pt-1">
+              {/* Title */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">What are you doing?</label>
+                <Input
+                  placeholder={titlePlaceholders[placeholderIdx]}
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  className="text-sm"
+                  autoFocus
+                />
+              </div>
+
+              {/* Time quick picks */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">When?</label>
+                <div className="flex gap-2">
+                  {timeOptions.map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setTime(t)}
+                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                        time === t
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      }`}
+                    >
+                      {t === "Custom" ? "Pick time" : t}
+                    </button>
                   ))}
-                </SelectContent>
-              </Select>
-              <Button onClick={handleSubmit} className="w-full" disabled={!title.trim() || !time.trim()}>
-                Create Plan
+                </div>
+                {time === "Custom" && (
+                  <Input
+                    placeholder="e.g. Saturday 8 PM"
+                    value={customTime}
+                    onChange={e => setCustomTime(e.target.value)}
+                    className="text-sm mt-2 animate-in fade-in slide-in-from-top-1 duration-200"
+                  />
+                )}
+              </div>
+
+              {/* Tags */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">Vibe <span className="text-muted-foreground/60">(optional)</span></label>
+                <div className="flex gap-2 flex-wrap">
+                  {tagOptions.map(t => (
+                    <button
+                      key={t.key}
+                      onClick={() => setTag(tag === t.key ? "" : t.key)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                        tag === t.key
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      }`}
+                    >
+                      {t.emoji} {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Location */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">Where? <span className="text-muted-foreground/60">(optional)</span></label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                  <Input
+                    placeholder="Add a spot or leave open"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    className="text-sm pl-8"
+                    list="places-list"
+                  />
+                  <datalist id="places-list">
+                    {places.map(p => (
+                      <option key={p.id} value={p.name} />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground">Add a note <span className="text-muted-foreground/60">(optional)</span></label>
+                <Textarea
+                  placeholder="First round on me! 🍻"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  className="min-h-[56px] text-sm resize-none"
+                />
+              </div>
+
+              <Button
+                onClick={handleSubmit}
+                className="w-full rounded-full h-10 font-semibold shadow-md shadow-primary/20"
+                disabled={!title.trim() || !resolvedTime}
+              >
+                Start plan 🚀
               </Button>
             </div>
           </DialogContent>
