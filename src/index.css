@@ -66,12 +66,91 @@
   }
 }
 
+/* Bounce count animation */
 @keyframes bounce-count {
   0%, 100% { transform: translateY(0); }
   30% { transform: translateY(-3px); }
   60% { transform: translateY(1px); }
 }
-
 .animate-bounce-count {
   animation: bounce-count 0.4s ease-out;
+}
+
+/* Activity pulse dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.8); }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Soft glow pulse for featured cards */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+  50% { box-shadow: 0 0 20px 2px hsl(var(--primary) / 0.08); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Join celebration */
+@keyframes join-celebrate {
+  0% { transform: scale(1); }
+  20% { transform: scale(0.92); }
+  40% { transform: scale(1.05); }
+  60% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+.animate-join-celebrate {
+  animation: join-celebrate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Shimmer for active cards */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer-overlay {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--primary) / 0.03) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Count increment animation */
+@keyframes count-up {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-count-up {
+  animation: count-up 0.3s ease-out;
+}
+
+/* Button press */
+.btn-press:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Smooth tab transition */
+.tab-content {
+  animation: tab-enter 0.25s ease-out;
+}
+@keyframes tab-enter {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade in subtle for simulated activity */
+@keyframes fade-in-subtle {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-fade-in-subtle {
+  animation: fade-in-subtle 0.6s ease-out;
 }
