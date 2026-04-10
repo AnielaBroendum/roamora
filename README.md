@@ -1,4 +1,4 @@
-# Roamora
+# Roamora (https://roamora.lovable.app)
 
 A mobile-first social app for discovering what's happening tonight — events, plans, and places — and joining others in real time.
 
