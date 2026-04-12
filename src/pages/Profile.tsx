@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Camera, LogOut, Check } from "lucide-react";
+import NationalityPicker from "@/components/NationalityPicker";
 
 const INTERESTS = [
   { value: "party", emoji: "🎉", label: "Party" },
@@ -153,7 +154,7 @@ export default function Profile() {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Nationality</label>
-            <Input value={nationality} onChange={(e) => setNationality(e.target.value)} placeholder="e.g. 🇨🇴 Colombian" />
+            <NationalityPicker value={nationality} onChange={setNationality} />
           </div>
         </div>
 
