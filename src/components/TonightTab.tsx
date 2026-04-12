@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { events, memberColors } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
+import { EventDetail } from "./EventDetail";
 import { useSimulatedActivity } from "@/hooks/useSimulatedActivity";
-import type { PlanMember } from "@/lib/types";
+import type { PlanMember, EventItem } from "@/lib/types";
 
 export function TonightTab({
   joinedEvents,
