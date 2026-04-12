@@ -293,7 +293,7 @@ export function PlansTab({
                       className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 btn-press ${
                         hasJoined ? "" : "shadow-md shadow-primary/20"
                       } ${isAnimating ? "scale-95" : ""}`}
-                      onClick={() => handleJoin(p.id)}
+                      onClick={(e) => { e.stopPropagation(); handleJoin(p.id); }}
                       disabled={hasJoined}
                     >
                       {hasJoined ? "Joined ✓" : "I'm in"}
