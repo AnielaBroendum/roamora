@@ -10,6 +10,7 @@ import type { Plan, PlanTag } from "@/lib/types";
 import { places } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
+import { PlanDetail } from "./PlanDetail";
 
 const tagConfig: Record<PlanTag, { emoji: string; label: string; color: string }> = {
   party: { emoji: "🎉", label: "Party", color: "bg-primary/10 text-primary border-0" },
