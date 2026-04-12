@@ -154,7 +154,7 @@ export default function Profile() {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Nationality</label>
-            <Input value={nationality} onChange={(e) => setNationality(e.target.value)} placeholder="e.g. 🇨🇴 Colombian" />
+            <NationalityPicker value={nationality} onChange={setNationality} />
           </div>
         </div>
 
