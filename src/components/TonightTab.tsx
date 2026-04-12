@@ -29,6 +29,7 @@ export function TonightTab({
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEvent, setModalEvent] = useState<{ title: string; participants: PlanMember[] } | null>(null);
   const [recentBumpId, setRecentBumpId] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 600);
