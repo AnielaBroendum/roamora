@@ -219,7 +219,8 @@ export function PlansTab({
             return (
               <div
                 key={p.id}
-                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 relative overflow-hidden ${
+                onClick={() => setSelectedPlan(p)}
+                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ${
                   isPopular ? "ring-1 ring-primary/10" : ""
                 } ${isCelebrating ? "animate-join-celebrate" : ""}`}
                 style={{ animationDelay: `${idx * 80}ms`, animationFillMode: "backwards" }}
