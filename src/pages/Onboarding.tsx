@@ -77,7 +77,7 @@ export default function Onboarding() {
       if (selectedInterests.size > 0) {
         const rows = Array.from(selectedInterests).map((interest) => ({
           user_id: user.id,
-          interest,
+          interest: interest as "party" | "salsa" | "yoga" | "food" | "chill" | "adventure",
         }));
         await supabase.from("user_interests").insert(rows);
       }

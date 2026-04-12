@@ -92,7 +92,10 @@ export default function Profile() {
       await supabase.from("user_interests").delete().eq("user_id", user.id);
       if (interests.size > 0) {
         await supabase.from("user_interests").insert(
-          Array.from(interests).map((interest) => ({ user_id: user.id, interest }))
+          Array.from(interests).map((interest) => ({
+            user_id: user.id,
+            interest: interest as "party" | "salsa" | "yoga" | "food" | "chill" | "adventure",
+          }))
         );
       }
 
