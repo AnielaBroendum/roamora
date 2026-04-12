@@ -71,7 +71,7 @@ export function EventDetail({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-5 -mt-6 relative z-10 pb-28">
+      <div className="flex-1 overflow-y-auto px-5 -mt-6 relative z-10 pb-6">
         {/* Title */}
         <h1 className="text-2xl font-bold text-foreground leading-tight">{event.name}</h1>
 
