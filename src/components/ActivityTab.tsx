@@ -64,6 +64,7 @@ export function ActivityTab({
         type: "event" as const,
         name: e.name,
         emoji: e.emoji,
+        image: e.image,
         lastMessage: lastMsg.isSystem ? "You joined" : `${lastMsg.sender}: ${lastMsg.text}`,
         lastMessageTime: lastMsg.time || "Just now",
         participants: eventGoingCounts[e.id] || e.going,
@@ -131,8 +132,14 @@ export function ActivityTab({
                 className="w-full flex items-center gap-3 p-3.5 text-left hover:bg-secondary/30 transition-colors btn-press animate-in fade-in slide-in-from-bottom-1 duration-200"
                 style={{ animationDelay: `${idx * 60}ms`, animationFillMode: "backwards" }}
               >
-                <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-xl">
-                  {thread.emoji || (thread.type === "plan" ? "📋" : "🎉")}
+                <div className="w-11 h-11 rounded-full shrink-0 overflow-hidden">
+                  {thread.image ? (
+                    <img src={thread.image} alt={thread.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-primary/10 flex items-center justify-center text-xl">
+                      {thread.emoji || (thread.type === "plan" ? "📋" : "🎉")}
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">

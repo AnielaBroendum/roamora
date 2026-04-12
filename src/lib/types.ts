@@ -15,6 +15,7 @@ export interface ChatThread {
   type: "plan" | "event";
   name: string;
   emoji?: string;
+  image?: string;
   lastMessage: string;
   lastMessageTime: string;
   participants: number;
