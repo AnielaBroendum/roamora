@@ -30,28 +30,38 @@ export function EventDetail({
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col max-w-md mx-auto animate-in slide-in-from-right-4 fade-in duration-300">
       {/* Hero */}
-      <div className={`relative h-72 bg-gradient-to-b ${gradient} flex items-end`}>
-        <div className="absolute inset-0 flex items-center justify-center text-8xl opacity-30 select-none">
-          {event.emoji}
-        </div>
+      <div className="relative h-72 overflow-hidden">
+        {event.image ? (
+          <img
+            src={event.image}
+            alt={event.name}
+            className="w-full h-full object-cover"
+            width={800}
+            height={512}
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-b ${gradient} flex items-center justify-center`}>
+            <span className="text-8xl opacity-30 select-none">{event.emoji}</span>
+          </div>
+        )}
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
         {/* Back + Share buttons */}
         <button
           onClick={onBack}
-          className="absolute top-[max(1rem,env(safe-area-inset-top))] left-4 w-10 h-10 rounded-full bg-background/40 backdrop-blur-md flex items-center justify-center btn-press"
+          className="absolute top-[max(1rem,env(safe-area-inset-top))] left-4 w-10 h-10 rounded-full bg-foreground/20 backdrop-blur-md flex items-center justify-center btn-press"
         >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
+          <ArrowLeft className="w-5 h-5 text-primary-foreground" />
         </button>
-        <button className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 w-10 h-10 rounded-full bg-background/40 backdrop-blur-md flex items-center justify-center btn-press">
-          <Share2 className="w-5 h-5 text-foreground" />
+        <button className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 w-10 h-10 rounded-full bg-foreground/20 backdrop-blur-md flex items-center justify-center btn-press">
+          <Share2 className="w-5 h-5 text-primary-foreground" />
         </button>
-
-        {/* Gradient fade to content */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-5 -mt-6 relative z-10 pb-28">
+      <div className="flex-1 overflow-y-auto px-5 -mt-8 relative z-10 pb-28">
         <h1 className="text-2xl font-bold text-foreground leading-tight">{event.name}</h1>
 
         {/* Pills */}
@@ -72,35 +82,46 @@ export function EventDetail({
           </span>
         </div>
 
+        {/* Address */}
+        {event.address && (
+          <div className="mt-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Location</h3>
+            <p className="text-sm text-foreground/80">{event.address}</p>
+          </div>
+        )}
+
         {/* Description */}
         <div className="mt-5 bg-card rounded-xl p-4">
           <p className="text-sm text-muted-foreground leading-relaxed">{event.desc}</p>
         </div>
 
-        {/* Participants */}
+        {/* Going section */}
         <div className="mt-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{goingCount}</span> going tonight
-            </span>
-          </div>
-          <div className="flex -space-x-2">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            {goingCount} Going
+          </h3>
+          <div className="flex -space-x-2 mb-2">
             {(event.recentJoiners || []).slice(0, 5).map((name, i) => (
-              <Avatar key={i} className="h-8 w-8 border-2 border-background">
+              <Avatar key={i} className="h-9 w-9 border-2 border-background">
                 <AvatarFallback className={`${memberColors[i % memberColors.length]} text-xs font-semibold`}>
                   {name[0]}
                 </AvatarFallback>
               </Avatar>
             ))}
             {goingCount > 5 && (
-              <Avatar className="h-8 w-8 border-2 border-background">
+              <Avatar className="h-9 w-9 border-2 border-background">
                 <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-medium">
                   +{goingCount - 5}
                 </AvatarFallback>
               </Avatar>
             )}
           </div>
+          {event.recentJoiners && event.recentJoiners.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {event.recentJoiners.slice(0, 3).join(", ")}
+              {goingCount > 3 && ` and ${goingCount - 3} more`}
+            </p>
+          )}
         </div>
       </div>
 
