@@ -42,6 +42,7 @@ export function PlansTab({
   const [celebratingId, setCelebratingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPlan, setModalPlan] = useState<Plan | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   const titlePlaceholders = [
     "Drinks in Poblado",
