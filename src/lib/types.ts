@@ -38,6 +38,9 @@ export interface EventItem {
   recentJoiners?: string[];
   image?: string;
   address?: string;
+  lat?: number;
+  lng?: number;
+  hosts?: string[];
 }
 
 export interface PlaceItem {
