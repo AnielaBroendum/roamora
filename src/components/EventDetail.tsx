@@ -71,7 +71,7 @@ export function EventDetail({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-5 -mt-6 relative z-10 pb-28">
+      <div className="flex-1 overflow-y-auto px-5 -mt-6 relative z-10 pb-6">
         {/* Title */}
         <h1 className="text-2xl font-bold text-foreground leading-tight">{event.name}</h1>
 
@@ -168,7 +168,7 @@ export function EventDetail({
       </div>
 
       {/* Fixed bottom CTA */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-background via-background to-transparent">
+      <div className="shrink-0 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] bg-background border-t border-border/30">
         <Button
           className={`w-full h-14 rounded-2xl text-base font-semibold btn-press transition-all duration-200 ${
             hasJoined ? "" : "shadow-lg shadow-primary/20"
