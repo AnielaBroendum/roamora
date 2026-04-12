@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Camera, LogOut, Check } from "lucide-react";
+import NationalityPicker from "@/components/NationalityPicker";
 
 const INTERESTS = [
   { value: "party", emoji: "🎉", label: "Party" },
