@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          nationality: string | null
+          onboarding_completed: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          nationality?: string | null
+          onboarding_completed?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          nationality?: string | null
+          onboarding_completed?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_interests: {
+        Row: {
+          id: string
+          interest: Database["public"]["Enums"]["user_interest"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          interest: Database["public"]["Enums"]["user_interest"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          interest?: Database["public"]["Enums"]["user_interest"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +76,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_interest: "party" | "salsa" | "yoga" | "food" | "chill" | "adventure"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +203,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_interest: ["party", "salsa", "yoga", "food", "chill", "adventure"],
+    },
   },
 } as const
