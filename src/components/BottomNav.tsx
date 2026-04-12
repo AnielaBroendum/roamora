@@ -1,10 +1,10 @@
-import { Calendar, Users, MapPin, User } from "lucide-react";
+import { Calendar, Users, MessageCircle } from "lucide-react";
 import type { Tab } from "@/lib/types";
 
 const tabs = [
   { id: "tonight" as Tab, icon: Calendar, label: "Tonight" },
   { id: "plans" as Tab, icon: Users, label: "Plans" },
-  { id: "places" as Tab, icon: MapPin, label: "Places" },
+  { id: "activity" as Tab, icon: MessageCircle, label: "Activity" },
 ] as const;
 
 export function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
