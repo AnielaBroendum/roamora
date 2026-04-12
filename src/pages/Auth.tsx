@@ -44,13 +44,13 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center px-6 max-w-md mx-auto">
+    <div className="min-h-[100dvh] bg-primary flex flex-col items-center justify-center px-6 max-w-md mx-auto">
       <div className="w-full space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-primary tracking-tight uppercase" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+          <h1 className="text-3xl font-bold text-primary-foreground tracking-tight uppercase" style={{ fontFamily: "'Fredoka', sans-serif" }}>
             Roamora
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-primary-foreground/70 text-sm">
             {mode === "login" ? "Welcome back, traveler ✈️" : "Join the adventure 🌍"}
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function Auth() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/40"
               required
             />
           </div>
@@ -74,12 +74,12 @@ export default function Auth() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-primary-foreground/40"
               required
               minLength={6}
             />
           </div>
-          <Button type="submit" className="w-full gap-2" disabled={loading}>
+          <Button type="submit" className="w-full gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90" disabled={loading}>
             {mode === "login" ? "Log in" : "Sign up"}
             <ArrowRight className="w-4 h-4" />
           </Button>
@@ -87,14 +87,14 @@ export default function Auth() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-border" />
+            <span className="w-full border-t border-primary-foreground/20" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">or</span>
+            <span className="bg-primary px-2 text-primary-foreground/60">or</span>
           </div>
         </div>
 
-        <Button variant="outline" className="w-full gap-2" onClick={handleGoogleLogin}>
+        <Button variant="outline" className="w-full gap-2 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20" onClick={handleGoogleLogin}>
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -104,12 +104,12 @@ export default function Auth() {
           Continue with Google
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-primary-foreground/70">
           {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             type="button"
             onClick={() => setMode(mode === "login" ? "signup" : "login")}
-            className="text-primary font-medium hover:underline"
+            className="text-primary-foreground font-medium hover:underline"
           >
             {mode === "login" ? "Sign up" : "Log in"}
           </button>
