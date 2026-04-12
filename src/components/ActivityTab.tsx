@@ -64,6 +64,7 @@ export function ActivityTab({
         type: "event" as const,
         name: e.name,
         emoji: e.emoji,
+        image: e.image,
         lastMessage: lastMsg.isSystem ? "You joined" : `${lastMsg.sender}: ${lastMsg.text}`,
         lastMessageTime: lastMsg.time || "Just now",
         participants: eventGoingCounts[e.id] || e.going,
