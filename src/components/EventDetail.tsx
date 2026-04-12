@@ -168,7 +168,7 @@ export function EventDetail({
       </div>
 
       {/* Fixed bottom CTA */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-background via-background to-transparent">
+      <div className="shrink-0 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] bg-background border-t border-border/30">
         <Button
           className={`w-full h-14 rounded-2xl text-base font-semibold btn-press transition-all duration-200 ${
             hasJoined ? "" : "shadow-lg shadow-primary/20"
