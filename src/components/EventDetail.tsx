@@ -177,7 +177,7 @@ export function EventDetail({
           onClick={() => onJoin(event.id)}
           disabled={hasJoined}
         >
-          {hasJoined ? "Going ✓" : "Join them"}
+          {hasJoined ? "Going ✓" : "Join"}
         </Button>
       </div>
     </div>

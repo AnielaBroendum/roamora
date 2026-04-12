@@ -183,7 +183,7 @@ export function TonightTab({
                       onClick={(ev) => { ev.stopPropagation(); handleJoin(e.id); }}
                       disabled={hasJoined}
                     >
-                      {hasJoined ? "Going ✓" : "Join them"}
+                      {hasJoined ? "Going ✓" : "Join"}
                     </Button>
                   </div>
 
