@@ -197,6 +197,16 @@ export function TonightTab({
           participants={modalEvent.participants}
         />
       )}
+
+      {selectedEvent && (
+        <EventDetail
+          event={selectedEvent}
+          goingCount={goingCounts[selectedEvent.id] || selectedEvent.going}
+          hasJoined={joinedEvents.has(selectedEvent.id)}
+          onJoin={(id) => { handleJoin(id); }}
+          onBack={() => setSelectedEvent(null)}
+        />
+      )}
     </div>
   );
 }
