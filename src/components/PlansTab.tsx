@@ -10,6 +10,7 @@ import type { Plan, PlanTag } from "@/lib/types";
 import { places } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
+import { PlanDetail } from "./PlanDetail";
 
 const tagConfig: Record<PlanTag, { emoji: string; label: string; color: string }> = {
   party: { emoji: "🎉", label: "Party", color: "bg-primary/10 text-primary border-0" },
@@ -41,6 +42,7 @@ export function PlansTab({
   const [celebratingId, setCelebratingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPlan, setModalPlan] = useState<Plan | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   const titlePlaceholders = [
     "Drinks in Poblado",
@@ -217,7 +219,8 @@ export function PlansTab({
             return (
               <div
                 key={p.id}
-                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 relative overflow-hidden ${
+                onClick={() => setSelectedPlan(p)}
+                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ${
                   isPopular ? "ring-1 ring-primary/10" : ""
                 } ${isCelebrating ? "animate-join-celebrate" : ""}`}
                 style={{ animationDelay: `${idx * 80}ms`, animationFillMode: "backwards" }}
@@ -264,7 +267,7 @@ export function PlansTab({
 
                   <div className="flex items-center justify-between pt-2 border-t border-border/40">
                     <button
-                      onClick={() => { setModalPlan(p); setModalOpen(true); }}
+                      onClick={(e) => { e.stopPropagation(); setModalPlan(p); setModalOpen(true); }}
                       className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
                     >
                       <div className="flex -space-x-2">
@@ -290,7 +293,7 @@ export function PlansTab({
                       className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 btn-press ${
                         hasJoined ? "" : "shadow-md shadow-primary/20"
                       } ${isAnimating ? "scale-95" : ""}`}
-                      onClick={() => handleJoin(p.id)}
+                      onClick={(e) => { e.stopPropagation(); handleJoin(p.id); }}
                       disabled={hasJoined}
                     >
                       {hasJoined ? "Joined ✓" : "I'm in"}
@@ -309,6 +312,15 @@ export function PlansTab({
           onOpenChange={setModalOpen}
           title={`Going: ${modalPlan.title}`}
           participants={modalPlan.members}
+        />
+      )}
+
+      {selectedPlan && (
+        <PlanDetail
+          plan={selectedPlan}
+          hasJoined={joinedPlans.has(selectedPlan.id)}
+          onJoin={(id) => { handleJoin(id); }}
+          onBack={() => setSelectedPlan(null)}
         />
       )}
     </div>
