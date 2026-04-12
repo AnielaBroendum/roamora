@@ -41,7 +41,7 @@ export function EventDetail({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col max-w-md mx-auto animate-in slide-in-from-right-4 fade-in duration-300">
+    <div className="fixed inset-0 z-[60] bg-background flex flex-col max-w-md mx-auto animate-in slide-in-from-right-4 fade-in duration-300">
       {/* Hero */}
       <div className="relative h-64 overflow-hidden shrink-0">
         {event.image ? (
