@@ -1,6 +1,26 @@
-export type Tab = "tonight" | "plans" | "places";
+export type Tab = "tonight" | "plans" | "activity";
 export type PlaceFilter = "All" | "Bars" | "Cheap eats" | "Hostels";
 export type PlanTag = "party" | "chill" | "food" | "adventure";
+
+export interface ChatMessage {
+  id: string;
+  sender: string;
+  text: string;
+  time: string;
+  isSystem?: boolean;
+}
+
+export interface ChatThread {
+  id: string;
+  type: "plan" | "event";
+  name: string;
+  emoji?: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  participants: number;
+  unread: number;
+  messages: ChatMessage[];
+}
 
 export interface PlanMember {
   name: string;

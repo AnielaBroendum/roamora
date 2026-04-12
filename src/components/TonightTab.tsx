@@ -14,13 +14,11 @@ export function TonightTab({
   joinedEvents,
   goingCounts,
   onJoin,
-  onNavigateToPlace,
   onSimBump,
 }: {
   joinedEvents: Set<string>;
   goingCounts: Record<string, number>;
   onJoin: (id: string) => void;
-  onNavigateToPlace?: (venueId: string) => void;
   onSimBump?: (id: string) => void;
 }) {
   const [loading, setLoading] = useState(true);
