@@ -3,7 +3,7 @@ import { Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { events, memberColors } from "@/lib/data";
+import { events, memberColors, eventCategories } from "@/lib/data";
 import { CardSkeleton } from "./CardSkeleton";
 import { ParticipantModal } from "./ParticipantModal";
 import { EventDetail } from "./EventDetail";
@@ -30,13 +30,13 @@ export function TonightTab({
   const [modalEvent, setModalEvent] = useState<{ title: string; participants: PlanMember[] } | null>(null);
   const [recentBumpId, setRecentBumpId] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("All");
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(t);
   }, []);
 
-  // Simulated activity
   const handleSimBump = useCallback((id: string) => {
     onSimBump?.(id);
     setRecentBumpId(id);
@@ -71,68 +71,91 @@ export function TonightTab({
     setModalOpen(true);
   };
 
+  const filteredEvents = activeFilter === "All"
+    ? events
+    : events.filter(e => e.tag === activeFilter);
+
   return (
-    <div className="space-y-5 tab-content">
+    <div className="space-y-4 tab-content">
       <p className="text-muted-foreground text-sm">What's happening tonight ✨</p>
+
+      {/* Category filter pills */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+        {eventCategories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setActiveFilter(cat)}
+            className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 btn-press ${
+              activeFilter === cat
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                : "bg-card text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
       {loading ? (
         <CardSkeleton count={3} />
       ) : (
-        <div className="space-y-3">
-          {events.map((e, idx) => {
+        <div className="space-y-4">
+          {filteredEvents.map((e, idx) => {
             const hasJoined = joinedEvents.has(e.id);
             const count = goingCounts[e.id] || e.going;
-            const isFeatured = e.featured;
-            const isAnimating = animatingId === e.id;
             const isCelebrating = celebratingId === e.id;
+            const isAnimating = animatingId === e.id;
             const wasRecentlyBumped = recentBumpId === e.id;
 
             return (
               <div
                 key={e.id}
                 onClick={() => setSelectedEvent(e)}
-                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all relative overflow-hidden cursor-pointer active:scale-[0.98] ${
-                  isFeatured ? "ring-1 ring-primary/20 shadow-lg shadow-primary/5 animate-glow-pulse" : ""
-                } ${isCelebrating ? "animate-join-celebrate" : ""}`}
+                className={`bg-card rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all cursor-pointer active:scale-[0.98] shadow-sm ${
+                  isCelebrating ? "animate-join-celebrate" : ""
+                }`}
                 style={{ animationDelay: `${idx * 80}ms`, animationFillMode: "backwards" }}
               >
-                {/* Shimmer overlay for featured */}
-                {isFeatured && <div className="absolute inset-0 shimmer-overlay pointer-events-none" />}
+                {/* Event image */}
+                {e.image && (
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={e.image}
+                      alt={e.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      width={800}
+                      height={512}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
+                    {e.label && (
+                      <span className="absolute top-3 left-3 text-[11px] font-semibold bg-primary text-primary-foreground px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-lg">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/80 animate-pulse-dot" />
+                        {e.label}
+                      </span>
+                    )}
+                    <Badge className="absolute top-3 right-3 bg-card/70 backdrop-blur-md text-foreground border-0 text-[10px] font-medium">
+                      {e.tag}
+                    </Badge>
+                  </div>
+                )}
 
-                <div className="relative z-10 space-y-3">
-                  {e.label && (
-                    <span className="text-[11px] font-semibold text-primary inline-flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-dot" />
-                      {e.label}
+                {/* Card content */}
+                <div className="p-4 space-y-3">
+                  <div>
+                    <h3 className="font-semibold text-foreground text-[15px] leading-tight">{e.name}</h3>
+                    <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed line-clamp-2">{e.desc}</p>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-primary/70" />
+                      {e.time}
                     </span>
-                  )}
-
-                  <div className="flex gap-3.5 items-start">
-                    <div className={`text-3xl flex items-center justify-center bg-primary/10 rounded-xl shrink-0 transition-transform duration-200 ${isFeatured ? "w-13 h-13" : "w-11 h-11"}`}>
-                      {e.emoji}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className={`font-semibold text-foreground leading-tight ${isFeatured ? "text-[15px]" : ""}`}>{e.name}</h3>
-                        <Badge className="shrink-0 bg-primary/10 text-primary border-0 text-[10px] font-medium">
-                          {e.tag}
-                        </Badge>
-                      </div>
-                      <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">{e.desc}</p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          {e.time}
-                        </span>
-                        <button
-                          onClick={(ev) => { ev.stopPropagation(); e.venueId && onNavigateToPlace?.(e.venueId); }}
-                          className={`flex items-center gap-1 truncate ${e.venueId ? "hover:text-primary transition-colors cursor-pointer" : ""}`}
-                        >
-                          <MapPin className="w-3.5 h-3.5 shrink-0" />
-                          <span className="truncate">{e.venue}</span>
-                        </button>
-                      </div>
-                    </div>
+                    <span className="flex items-center gap-1 truncate">
+                      <MapPin className="w-3.5 h-3.5 text-primary/70 shrink-0" />
+                      <span className="truncate">{e.venue}</span>
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-border/40">
@@ -150,17 +173,7 @@ export function TonightTab({
                         ))}
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        {e.recentJoiners && e.recentJoiners.length > 0 ? (
-                          <>
-                            <span className="font-medium text-foreground/70">{e.recentJoiners.slice(0, 2).join(", ")}</span>
-                            {count > 2 && <> + <span className={`font-medium text-foreground/70 transition-all duration-300 ${isAnimating || wasRecentlyBumped ? "animate-count-up" : ""}`}>{count - 2}</span> others</>}
-                          </>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <Users className="w-3.5 h-3.5" />
-                            <span className={`font-medium text-foreground/70 transition-all duration-300 ${isAnimating || wasRecentlyBumped ? "animate-count-up" : ""}`}>{count}</span> going tonight
-                          </span>
-                        )}
+                        <span className={`font-medium text-foreground/70 transition-all duration-300 ${isAnimating || wasRecentlyBumped ? "animate-count-up" : ""}`}>{count}</span> going
                       </span>
                     </button>
                     <Button
@@ -176,7 +189,6 @@ export function TonightTab({
                     </Button>
                   </div>
 
-                  {/* Subtle "someone joined" indicator */}
                   {wasRecentlyBumped && !hasJoined && (
                     <div className="text-[11px] text-primary/70 animate-fade-in-subtle">
                       Someone just joined
@@ -186,6 +198,9 @@ export function TonightTab({
               </div>
             );
           })}
+          {filteredEvents.length === 0 && (
+            <p className="text-center text-muted-foreground text-sm py-8">No events in this category tonight</p>
+          )}
         </div>
       )}
 
