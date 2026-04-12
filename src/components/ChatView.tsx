@@ -44,8 +44,14 @@ export function ChatView({
             <Users className="w-3 h-3" /> {thread.participants} people
           </span>
         </div>
-        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-lg shrink-0">
-          {thread.emoji || "💬"}
+        <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
+          {thread.image ? (
+            <img src={thread.image} alt={thread.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-primary/10 flex items-center justify-center text-lg">
+              {thread.emoji || "💬"}
+            </div>
+          )}
         </div>
       </header>
 
