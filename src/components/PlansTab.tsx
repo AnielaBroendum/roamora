@@ -314,6 +314,15 @@ export function PlansTab({
           participants={modalPlan.members}
         />
       )}
+
+      {selectedPlan && (
+        <PlanDetail
+          plan={selectedPlan}
+          hasJoined={joinedPlans.has(selectedPlan.id)}
+          onJoin={(id) => { handleJoin(id); }}
+          onBack={() => setSelectedPlan(null)}
+        />
+      )}
     </div>
   );
 }
