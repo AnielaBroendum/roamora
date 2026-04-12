@@ -52,7 +52,7 @@ export default function Index() {
     <div className="min-h-[100dvh] bg-background flex flex-col max-w-md mx-auto relative">
       <header className="flex items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-3 sticky top-0 bg-background/80 backdrop-blur-xl z-40">
         <div>
-          <h1 className="text-2xl font-bold text-primary tracking-tight">Roamora</h1>
+          <h1 className="text-2xl font-bold text-primary tracking-tight uppercase" style={{ fontFamily: "'Fredoka', sans-serif" }}>Roamora</h1>
           <button className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5 hover:text-foreground/70 transition-colors">
             <MapPin className="w-3.5 h-3.5" /> Medellín <ChevronDown className="w-3 h-3" />
           </button>
