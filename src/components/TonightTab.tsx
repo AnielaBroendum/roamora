@@ -90,7 +90,8 @@ export function TonightTab({
             return (
               <div
                 key={e.id}
-                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all relative overflow-hidden ${
+                onClick={() => setSelectedEvent(e)}
+                className={`bg-card rounded-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all relative overflow-hidden cursor-pointer active:scale-[0.98] ${
                   isFeatured ? "ring-1 ring-primary/20 shadow-lg shadow-primary/5 animate-glow-pulse" : ""
                 } ${isCelebrating ? "animate-join-celebrate" : ""}`}
                 style={{ animationDelay: `${idx * 80}ms`, animationFillMode: "backwards" }}
@@ -124,7 +125,7 @@ export function TonightTab({
                           {e.time}
                         </span>
                         <button
-                          onClick={() => e.venueId && onNavigateToPlace?.(e.venueId)}
+                          onClick={(ev) => { ev.stopPropagation(); e.venueId && onNavigateToPlace?.(e.venueId); }}
                           className={`flex items-center gap-1 truncate ${e.venueId ? "hover:text-primary transition-colors cursor-pointer" : ""}`}
                         >
                           <MapPin className="w-3.5 h-3.5 shrink-0" />
@@ -136,7 +137,7 @@ export function TonightTab({
 
                   <div className="flex items-center justify-between pt-2 border-t border-border/40">
                     <button
-                      onClick={() => showParticipants(e.name, e.recentJoiners || [], count)}
+                      onClick={(ev) => { ev.stopPropagation(); showParticipants(e.name, e.recentJoiners || [], count); }}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
                       <div className="flex -space-x-1.5">
@@ -168,7 +169,7 @@ export function TonightTab({
                       className={`rounded-full px-5 h-8 text-xs font-semibold transition-all duration-200 btn-press ${
                         hasJoined ? "" : "shadow-md shadow-primary/20"
                       } ${isAnimating ? "scale-95" : ""}`}
-                      onClick={() => handleJoin(e.id)}
+                      onClick={(ev) => { ev.stopPropagation(); handleJoin(e.id); }}
                       disabled={hasJoined}
                     >
                       {hasJoined ? "Going ✓" : "Join them"}
