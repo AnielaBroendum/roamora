@@ -36,7 +36,16 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) return null;
   if (session && profile?.onboarding_completed) return <Navigate to="/" replace />;
-  if (session && profile && !profile.onboarding_completed) return <Navigate to="/onboarding" replace />;
+
+  return <>{children}</>;
+}
+
+function OnboardingRoute({ children }: { children: React.ReactNode }) {
+  const { session, profile, loading } = useAuth();
+
+  if (loading) return null;
+  if (!session) return <Navigate to="/auth" replace />;
+  if (profile?.onboarding_completed) return <Navigate to="/" replace />;
 
   return <>{children}</>;
 }
@@ -50,7 +59,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
-            <Route path="/onboarding" element={<AuthRoute><Onboarding /></AuthRoute>} />
+            <Route path="/onboarding" element={<OnboardingRoute><Onboarding /></OnboardingRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
