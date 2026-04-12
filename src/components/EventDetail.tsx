@@ -82,11 +82,21 @@ export function EventDetail({
           </span>
         </div>
 
-        {/* Address */}
+        {/* Location with map */}
         {event.address && (
-          <div className="mt-4">
+          <div className="mt-5">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Location</h3>
-            <p className="text-sm text-foreground/80">{event.address}</p>
+            <p className="text-sm text-foreground/80 mb-2">{event.venue} — {event.address}</p>
+            <div className="rounded-xl overflow-hidden border border-border/40 h-40">
+              <iframe
+                title="Map"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent("-75.58,6.19,-75.55,6.22")}&layer=mapnik&marker=${encodeURIComponent("6.208,-75.567")}`}
+              />
+            </div>
           </div>
         )}
 
