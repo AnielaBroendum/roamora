@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Send, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { memberColors } from "@/lib/data";
 import type { ChatThread, ChatMessage } from "@/lib/types";
 
@@ -32,7 +33,7 @@ export function ChatView({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col max-w-md mx-auto animate-in slide-in-from-right-4 fade-in duration-200">
+    <div className="fixed inset-y-0 left-1/2 z-[60] flex w-full max-w-md -translate-x-1/2 flex-col overflow-hidden bg-background animate-in slide-in-from-right-4 fade-in duration-200">
       {/* Header */}
       <header className="flex items-center gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 border-b border-border/40 bg-background/80 backdrop-blur-xl shrink-0">
         <button onClick={onBack} className="btn-press p-1">
@@ -99,19 +100,19 @@ export function ChatView({
       </div>
 
       {/* Input */}
-      <div className="px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 border-t border-border/40 bg-background shrink-0">
-        <div className="flex items-center gap-2">
-          <input
+      <div className="shrink-0 border-t border-border/40 bg-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl">
+        <div className="flex items-end gap-2 rounded-[1.5rem] bg-card p-1.5">
+          <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Say hi 👋"
-            className="flex-1 bg-card rounded-full px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+            placeholder="Write a message..."
+            className="h-11 flex-1 rounded-full border-0 bg-transparent px-4 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim()}
-            className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center btn-press disabled:opacity-40 transition-opacity"
+            className="btn-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
           >
             <Send className="w-4 h-4" />
           </button>
