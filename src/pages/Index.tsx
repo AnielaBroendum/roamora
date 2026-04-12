@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapPin, ChevronDown, User } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Tab, Plan } from "@/lib/types";
 import { memberColors, events, initialPlans } from "@/lib/data";
 import { BottomNav } from "@/components/BottomNav";
@@ -9,6 +11,8 @@ import { PlansTab } from "@/components/PlansTab";
 import { ActivityTab } from "@/components/ActivityTab";
 
 export default function Index() {
+  const navigate = useNavigate();
+  const { profile } = useAuth();
   const [tab, setTab] = useState<Tab>("tonight");
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
@@ -57,9 +61,12 @@ export default function Index() {
             <MapPin className="w-3.5 h-3.5" /> Medellín <ChevronDown className="w-3 h-3" />
           </button>
         </div>
-        <Avatar className="h-9 w-9 ring-2 ring-border">
+        <Avatar className="h-9 w-9 ring-2 ring-border cursor-pointer" onClick={() => navigate("/profile")}>
+          {profile?.avatar_url ? (
+            <AvatarImage src={profile.avatar_url} />
+          ) : null}
           <AvatarFallback className="bg-secondary text-secondary-foreground text-sm">
-            <User className="w-4 h-4" />
+            {profile?.display_name?.[0]?.toUpperCase() || <User className="w-4 h-4" />}
           </AvatarFallback>
         </Avatar>
       </header>
