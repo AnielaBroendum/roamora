@@ -267,7 +267,7 @@ export function PlansTab({
 
                   <div className="flex items-center justify-between pt-2 border-t border-border/40">
                     <button
-                      onClick={() => { setModalPlan(p); setModalOpen(true); }}
+                      onClick={(e) => { e.stopPropagation(); setModalPlan(p); setModalOpen(true); }}
                       className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
                     >
                       <div className="flex -space-x-2">
