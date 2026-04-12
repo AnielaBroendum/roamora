@@ -1,4 +1,9 @@
 import type { Plan, EventItem, PlaceItem } from "./types";
+import pubCrawlImg from "@/assets/events/pub-crawl.jpg";
+import reggaetonImg from "@/assets/events/reggaeton-night.jpg";
+import jazzImg from "@/assets/events/live-jazz.jpg";
+import sunsetImg from "@/assets/events/rooftop-sunset.jpg";
+import latinDanceImg from "@/assets/events/latin-dance.jpg";
 
 export const memberColors = [
   "bg-primary/20 text-primary",
@@ -8,12 +13,14 @@ export const memberColors = [
   "bg-primary/30 text-primary",
 ];
 
+export const eventCategories = ["All", "Party", "Live Music", "Social", "Pub Crawl"] as const;
+
 export const events: EventItem[] = [
-  { id: "e1", name: "Pub Crawl Poblado", desc: "Hit 5 bars with fellow backpackers — shots included!", time: "8:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Pub Crawl", emoji: "🍻", going: 34, label: "🔥 Popular tonight", featured: true, recentJoiners: ["Alex", "Mia", "Carlos"] },
-  { id: "e2", name: "Reggaeton Night", desc: "The biggest reggaeton party in Medellín. Dress to impress.", time: "10:00 PM", venue: "Salon Amador", venueId: "p3", tag: "Party", emoji: "🎶", going: 52, label: "Filling up fast", featured: true, recentJoiners: ["Tom", "Lena"] },
-  { id: "e3", name: "Live Jazz at Calle 10", desc: "Intimate jazz session with local musicians & craft cocktails.", time: "7:30 PM", venue: "La Octava Bar", venueId: "p2", tag: "Live Music", emoji: "🎷", going: 8, recentJoiners: ["Nina"] },
-  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Social", emoji: "🌅", going: 15, recentJoiners: ["Sophie", "Max"] },
-  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22, label: "Trending", recentJoiners: ["João", "Emma", "Ava"] },
+  { id: "e1", name: "Pub Crawl Poblado", desc: "Hit 5 bars with fellow backpackers — shots included!", time: "8:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Pub Crawl", emoji: "🍻", going: 34, label: "🔥 Popular tonight", featured: true, recentJoiners: ["Alex", "Mia", "Carlos"], image: pubCrawlImg, address: "Cra. 35 #8A-39, El Poblado" },
+  { id: "e2", name: "Reggaeton Night", desc: "The biggest reggaeton party in Medellín. Dress to impress.", time: "10:00 PM", venue: "Salon Amador", venueId: "p3", tag: "Party", emoji: "🎶", going: 52, label: "Filling up fast", featured: true, recentJoiners: ["Tom", "Lena"], image: reggaetonImg, address: "Cra. 49 #52-107, Centro" },
+  { id: "e3", name: "Live Jazz at Calle 10", desc: "Intimate jazz session with local musicians & craft cocktails.", time: "7:30 PM", venue: "La Octava Bar", venueId: "p2", tag: "Live Music", emoji: "🎷", going: 8, recentJoiners: ["Nina"], image: jazzImg, address: "Calle 10 #43E-16, Poblado" },
+  { id: "e4", name: "Rooftop Sunset Session", desc: "Golden hour drinks with panoramic city views.", time: "5:00 PM", venue: "Envy Rooftop", venueId: "p1", tag: "Social", emoji: "🌅", going: 15, recentJoiners: ["Sophie", "Max"], image: sunsetImg, address: "Cra. 35 #8A-39, El Poblado" },
+  { id: "e5", name: "Latin Dance Party", desc: "Salsa, bachata & merengue — beginners welcome!", time: "9:00 PM", venue: "Salsa Club Centro", tag: "Party", emoji: "💃", going: 22, label: "Trending", recentJoiners: ["João", "Emma", "Ava"], image: latinDanceImg, address: "Calle 53 #45-11, Centro" },
 ];
 
 export const initialPlans: Plan[] = [

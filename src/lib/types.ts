@@ -36,6 +36,8 @@ export interface EventItem {
   label?: string;
   featured?: boolean;
   recentJoiners?: string[];
+  image?: string;
+  address?: string;
 }
 
 export interface PlaceItem {
