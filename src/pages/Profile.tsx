@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Camera, LogOut, Check } from "lucide-react";
 import NationalityPicker from "@/components/NationalityPicker";
+import AvatarCropModal from "@/components/AvatarCropModal";
 
 const INTERESTS = [
   { value: "party", emoji: "🎉", label: "Party" },
@@ -22,6 +23,7 @@ export default function Profile() {
   const { user, profile, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(profile?.display_name || "");
   const [bio, setBio] = useState(profile?.bio || "");
@@ -30,6 +32,9 @@ export default function Profile() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [interests, setInterests] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
+
+  // Crop modal state
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -52,12 +57,21 @@ export default function Profile() {
     }
   }, [user]);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setCropSrc(url);
     }
+    // Reset so the same file can be re-selected
+    e.target.value = "";
+  };
+
+  const handleCropDone = (blob: Blob) => {
+    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(blob));
+    setCropSrc(null);
   };
 
   const toggleInterest = (interest: string) => {
@@ -77,17 +91,26 @@ export default function Profile() {
       let avatar_url = profile?.avatar_url || null;
 
       if (avatarFile) {
-        const ext = avatarFile.name.split(".").pop();
-        const path = `${user.id}/avatar.${ext}`;
-        await supabase.storage.from("avatars").upload(path, avatarFile, { upsert: true });
+        const path = `${user.id}/avatar.jpg`;
+        const { error: uploadError } = await supabase.storage
+          .from("avatars")
+          .upload(path, avatarFile, { upsert: true, contentType: "image/jpeg" });
+
+        if (uploadError) {
+          throw new Error(uploadError.message);
+        }
+
         const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
-        avatar_url = publicUrl;
+        // Cache-bust so the new image shows immediately
+        avatar_url = `${publicUrl}?t=${Date.now()}`;
       }
 
-      await supabase
+      const { error: updateError } = await supabase
         .from("profiles")
         .update({ display_name: name, bio, nationality, avatar_url })
         .eq("user_id", user.id);
+
+      if (updateError) throw new Error(updateError.message);
 
       // Sync interests: delete all, re-insert
       await supabase.from("user_interests").delete().eq("user_id", user.id);
@@ -100,10 +123,12 @@ export default function Profile() {
         );
       }
 
+      setAvatarFile(null);
       await refreshProfile();
       toast({ title: "Saved!", description: "Your profile has been updated." });
-    } catch {
-      toast({ title: "Error", description: "Could not save profile.", variant: "destructive" });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not save profile.";
+      toast({ title: "Error", description: message, variant: "destructive" });
     }
     setSaving(false);
   };
@@ -125,7 +150,11 @@ export default function Profile() {
       <div className="flex-1 px-5 pb-8 space-y-6">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-3 pt-2">
-          <label className="cursor-pointer group relative">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="cursor-pointer group relative"
+          >
             <Avatar className="h-24 w-24 ring-4 ring-border group-hover:ring-primary transition-colors">
               {avatarPreview ? (
                 <AvatarImage src={avatarPreview} />
@@ -138,8 +167,15 @@ export default function Profile() {
             <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-1.5">
               <Camera className="w-3.5 h-3.5" />
             </div>
-            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-          </label>
+          </button>
+          <p className="text-xs text-muted-foreground">Tap to change photo</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
         </div>
 
         {/* Fields */}
@@ -191,6 +227,15 @@ export default function Profile() {
           <LogOut className="w-4 h-4" /> Sign out
         </Button>
       </div>
+
+      {/* Crop Modal */}
+      {cropSrc && (
+        <AvatarCropModal
+          imageSrc={cropSrc}
+          onCropDone={handleCropDone}
+          onClose={() => setCropSrc(null)}
+        />
+      )}
     </div>
   );
 }
