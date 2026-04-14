@@ -41,6 +41,7 @@ export default function Index() {
 
   const handleJoin = (id: string) => {
     if (!requireAuth()) return;
+    if (joinedPlans.has(id)) return;
     setJoinedPlans(prev => new Set(prev).add(id));
     setPlans(prev => prev.map(p => p.id === id ? {
       ...p,
