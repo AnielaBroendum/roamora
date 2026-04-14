@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MapPin, ChevronDown, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import type { Tab, Plan } from "@/lib/types";
 import { memberColors, events, initialPlans } from "@/lib/data";
 import { BottomNav } from "@/components/BottomNav";
@@ -12,7 +13,8 @@ import { ActivityTab } from "@/components/ActivityTab";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
+  const { toast } = useToast();
   const [tab, setTab] = useState<Tab>("tonight");
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [joinedPlans, setJoinedPlans] = useState<Set<string>>(new Set());
@@ -21,13 +23,24 @@ export default function Index() {
     () => Object.fromEntries(events.map(e => [e.id, e.going]))
   );
 
+  const requireAuth = () => {
+    if (!session) {
+      toast({ title: "Sign up to join", description: "Create an account to join events and plans.", variant: "default" });
+      navigate("/auth");
+      return false;
+    }
+    return true;
+  };
+
   const handleJoinEvent = (id: string) => {
+    if (!requireAuth()) return;
     if (joinedEvents.has(id)) return;
     setJoinedEvents(prev => new Set(prev).add(id));
     setEventGoingCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
   const handleJoin = (id: string) => {
+    if (!requireAuth()) return;
     if (joinedPlans.has(id)) return;
     setJoinedPlans(prev => new Set(prev).add(id));
     setPlans(prev => prev.map(p => p.id === id ? {
@@ -37,6 +50,7 @@ export default function Index() {
   };
 
   const handleCreatePlan = (plan: Omit<Plan, "id" | "organizer" | "avatar" | "members">) => {
+    if (!requireAuth()) return;
     const newPlan: Plan = {
       ...plan,
       id: Date.now().toString(),
@@ -61,7 +75,7 @@ export default function Index() {
             <MapPin className="w-3.5 h-3.5" /> Medellín <ChevronDown className="w-3 h-3" />
           </button>
         </div>
-        <Avatar className="h-9 w-9 ring-2 ring-border cursor-pointer" onClick={() => navigate("/profile")}>
+        <Avatar className="h-9 w-9 ring-2 ring-border cursor-pointer" onClick={() => navigate(session ? "/profile" : "/auth")}>
           {profile?.avatar_url ? (
             <AvatarImage src={profile.avatar_url} />
           ) : null}
