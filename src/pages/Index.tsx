@@ -50,6 +50,7 @@ export default function Index() {
   };
 
   const handleCreatePlan = (plan: Omit<Plan, "id" | "organizer" | "avatar" | "members">) => {
+    if (!requireAuth()) return;
     const newPlan: Plan = {
       ...plan,
       id: Date.now().toString(),
