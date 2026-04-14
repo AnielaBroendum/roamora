@@ -75,7 +75,7 @@ export default function Index() {
             <MapPin className="w-3.5 h-3.5" /> Medellín <ChevronDown className="w-3 h-3" />
           </button>
         </div>
-        <Avatar className="h-9 w-9 ring-2 ring-border cursor-pointer" onClick={() => navigate("/profile")}>
+        <Avatar className="h-9 w-9 ring-2 ring-border cursor-pointer" onClick={() => navigate(session ? "/profile" : "/auth")}>
           {profile?.avatar_url ? (
             <AvatarImage src={profile.avatar_url} />
           ) : null}
