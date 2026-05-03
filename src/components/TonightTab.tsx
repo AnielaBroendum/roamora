@@ -197,14 +197,6 @@ export function TonightTab({
                   )}
                 </div>
               </div>
-
-                  {wasRecentlyBumped && !hasJoined && (
-                    <div className="text-[11px] text-primary/70 animate-fade-in-subtle">
-                      Someone just joined
-                    </div>
-                  )}
-                </div>
-              </div>
             );
           })}
           {filteredEvents.length === 0 && (
