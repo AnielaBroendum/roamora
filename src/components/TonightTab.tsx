@@ -86,7 +86,7 @@ export function TonightTab({
             className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 btn-press ${
               activeFilter === cat
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                : "bg-card text-muted-foreground hover:text-foreground"
+                : "bg-card/10 text-muted-foreground hover:bg-card/20 hover:text-foreground border border-foreground/10"
             }`}
           >
             {cat}
