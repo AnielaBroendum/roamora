@@ -9,7 +9,7 @@ const tabs = [
 
 export function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/60 backdrop-blur-xl border-t border-foreground/10 z-50">
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-background/60 backdrop-blur-xl border border-foreground/10 rounded-full shadow-lg z-50">
       <div className="flex justify-around items-end pb-[env(safe-area-inset-bottom)] px-2">
         {tabs.map(t => {
           const active = tab === t.id;
